@@ -6,6 +6,34 @@ export function getDialogV2() {
   return DialogV2;
 }
 
+/** Return Foundry's major generation without spreading version checks through integrations. */
+export function foundryGeneration() {
+  const releaseGeneration = Number(globalThis.game?.release?.generation);
+  if (Number.isInteger(releaseGeneration)) return releaseGeneration;
+
+  const versionGeneration = Number.parseInt(String(globalThis.game?.version ?? ""), 10);
+  return Number.isInteger(versionGeneration) ? versionGeneration : 14;
+}
+
+/**
+ * Normalize the breaking ContextMenuEntry rename between Foundry v13 and v14.
+ * Callers use the v14-style semantic names; this function emits the contract
+ * consumed by the running Foundry generation.
+ */
+export function createContextMenuEntry({ label, icon = "", group, visible, onClick }) {
+  if (foundryGeneration() >= 14) {
+    return { label, icon, group, visible, onClick };
+  }
+
+  return {
+    name: label,
+    icon: icon ? `<i class="${icon}" aria-hidden="true"></i>` : "",
+    group,
+    condition: visible,
+    callback: onClick
+  };
+}
+
 export async function renderFoundryTemplate(path, data) {
   const renderer = globalThis.foundry?.applications?.handlebars?.renderTemplate;
   if (typeof renderer !== "function") {
@@ -45,8 +73,17 @@ export function notify(level, key, data = {}) {
 
 export function resolveActorFromDirectoryTarget(target) {
   const HTMLElementClass = globalThis.HTMLElement;
-  if (!HTMLElementClass || !(target instanceof HTMLElementClass)) return null;
-  const entry = target.closest("[data-entry-id], [data-document-id]") ?? target;
+  if (!HTMLElementClass) return null;
+  const element = target instanceof HTMLElementClass
+    ? target
+    : target?.[0] instanceof HTMLElementClass
+      ? target[0]
+      : target?.get?.(0) instanceof HTMLElementClass
+        ? target.get(0)
+        : null;
+  if (!element) return null;
+
+  const entry = element.closest("[data-entry-id], [data-document-id]") ?? element;
   const actorId = entry.dataset.entryId ?? entry.dataset.documentId;
   return actorId ? globalThis.game?.actors?.get(actorId) ?? null : null;
 }

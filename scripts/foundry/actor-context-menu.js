@@ -1,9 +1,14 @@
-import { canExportActor, localize, resolveActorFromDirectoryTarget } from "./compatibility.js";
+import {
+  canExportActor,
+  createContextMenuEntry,
+  localize,
+  resolveActorFromDirectoryTarget
+} from "./compatibility.js";
 import { logger } from "../utils/logger.js";
 
 export function registerActorContextMenu({ adapterRegistry, exportService }) {
   globalThis.Hooks.on("getActorContextOptions", (_application, menuItems) => {
-    menuItems.push({
+    menuItems.push(createContextMenuEntry({
       group: "document",
       icon: "fas fa-file-export",
       label: localize("CHARACTER-EXPORTER.ContextMenu.Export", "Export Character"),
@@ -11,11 +16,12 @@ export function registerActorContextMenu({ adapterRegistry, exportService }) {
         const actor = resolveActorFromDirectoryTarget(target);
         return canExportActor(actor) && Boolean(adapterRegistry.getAdapter(actor));
       },
-      onClick: (_event, target) => {
+      onClick: (...args) => {
+        const target = args.at(-1);
         const actor = resolveActorFromDirectoryTarget(target);
         if (!actor) return;
-        exportService.exportActor(actor.id).catch(error => logger.error("Unhandled export error", error));
+        return exportService.exportActor(actor.id).catch(error => logger.error("Unhandled export error", error));
       }
-    });
+    }));
   });
 }

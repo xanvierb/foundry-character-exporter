@@ -19,10 +19,17 @@ const requiredFiles = [
 for (const file of requiredFiles) await access(file, fsConstants.R_OK);
 
 const manifest = JSON.parse(await readFile("module.json", "utf8"));
+const packageMetadata = JSON.parse(await readFile("package.json", "utf8"));
 const language = JSON.parse(await readFile("lang/en.json", "utf8"));
 const template = JSON.parse(await readFile("templates/sheets/default/template.json", "utf8"));
 
 if (manifest.id !== "character-exporter") throw new Error("module.json id must be character-exporter");
+if (packageMetadata.version !== manifest.version) {
+  throw new Error("package.json and module.json versions must match");
+}
+if (manifest.download && !manifest.download.includes(`/tags/${manifest.version}.zip`)) {
+  throw new Error("module.json download URL must match the module version tag");
+}
 if (manifest.type !== "module") throw new Error("module.json type must be module");
 if (!Array.isArray(manifest.media)) throw new Error("module.json media must be an array");
 if (!manifest.esmodules?.includes("scripts/main.js")) throw new Error("module.json must load scripts/main.js");

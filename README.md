@@ -13,7 +13,7 @@ Version 1 intentionally does not create PDF files itself and has no PDF runtime 
 
 NPC export and systems other than `dnd5e` are not enabled in version 1. The adapter and template registries are designed to support them later without changing the renderer.
 
-The implementation uses the v13/v14 `getActorContextOptions` hook, `foundry.applications.api.DialogV2`, `foundry.applications.handlebars.renderTemplate`, `game.actors`, `Actor#getRollData`, and `Document#testUserPermission` APIs. The adapter supports the dnd5e 5.1.9 prepared data model as well as the 5.3 senses and spell-source representations. Dnd5e 5.1.9 is intended for Foundry v13; use the current dnd5e 5.3 release on Foundry v14.
+The implementation uses the v13/v14 `getActorContextOptions` hook, `foundry.applications.api.DialogV2`, `foundry.applications.handlebars.renderTemplate`, `game.actors`, `Actor#getRollData`, and `Document#testUserPermission` APIs. A small compatibility helper normalizes the ContextMenuEntry field and callback changes between Foundry v13 and v14, including v13 jQuery targets. The adapter supports the dnd5e 5.1.9 prepared data model as well as the 5.3 senses and spell-source representations. Dnd5e 5.1.9 is intended for Foundry v13; use the current dnd5e 5.3 release on Foundry v14.
 
 ## Installation
 
@@ -191,7 +191,7 @@ npm test
 npm run check
 ```
 
-The tests use Node's built-in test runner and cover normalization, signed modifiers, schema validation, adapter selection, template registration and compatibility, HTML renderer boundaries, and a representative multiclass dnd5e conversion. The project checker validates manifests, required files, template metadata, forbidden Actor/system access in sheet templates, and unsafe dynamic execution patterns.
+The tests use Node's built-in test runner and cover normalization, signed modifiers, schema validation, adapter selection, template registration and compatibility, v13/v14 context-menu dispatch, DialogV2 selection, standalone print controls, end-to-end export-service delivery, HTML renderer boundaries, and representative multiclass dnd5e 5.1.9/5.3 conversions. The project checker validates manifests, required files, template metadata, forbidden Actor/system access in sheet templates, and unsafe dynamic execution patterns.
 
 Because Foundry VTT itself is proprietary and is not bundled in this repository, automated tests do not boot a complete Foundry client. Final release verification should also be performed in a Foundry v13/dnd5e 5.1.9 World and a Foundry v14/dnd5e 5.3 World using characters with multiclassing, containers, 2014 and 2024 rules, prepared spells, long feature descriptions, and a blocked-popup test.
 
