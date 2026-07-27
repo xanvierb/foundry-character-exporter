@@ -16,6 +16,19 @@ function stylesheetLinks(paths, baseUri) {
   }).join("\n");
 }
 
+const PAGE_DIMENSIONS = Object.freeze({
+  A4: Object.freeze({ width: "210mm", height: "297mm" }),
+  Letter: Object.freeze({ width: "215.9mm", height: "279.4mm" })
+});
+
+function pageVariables(page = {}) {
+  const dimensions = PAGE_DIMENSIONS[page.size] ?? PAGE_DIMENSIONS.A4;
+  const landscape = page.orientation === "landscape";
+  const width = landscape ? dimensions.height : dimensions.width;
+  const height = landscape ? dimensions.width : dimensions.height;
+  return `:root { --character-exporter-page-width: ${width}; --character-exporter-page-height: ${height}; }`;
+}
+
 const SHELL_STYLE = `
   :root { color-scheme: light; }
   * { box-sizing: border-box; }
@@ -23,7 +36,8 @@ const SHELL_STYLE = `
   body { background: #d9d9d9; color: #202020; }
   .character-exporter-controls {
     position: sticky; top: 0; z-index: 10000; display: flex; justify-content: flex-end; gap: .6rem;
-    padding: .65rem max(1rem, calc((100vw - 210mm) / 2)); background: #20252b; color: #fff;
+    padding: .65rem max(1rem, calc((100vw - var(--character-exporter-page-width)) / 2));
+    background: #20252b; color: #fff;
     box-shadow: 0 2px 8px rgb(0 0 0 / 28%); font: 600 14px/1.2 system-ui, sans-serif;
   }
   .character-exporter-controls button {
@@ -31,7 +45,10 @@ const SHELL_STYLE = `
     background: #f7f7f7; color: #17191c; font: inherit; cursor: pointer;
   }
   .character-exporter-controls button:hover { background: #fff; }
-  .character-exporter-document { width: 210mm; min-height: 297mm; margin: 8mm auto; background: #fff; }
+  .character-exporter-document {
+    width: var(--character-exporter-page-width); min-height: var(--character-exporter-page-height);
+    margin: 8mm auto; background: #fff;
+  }
   .character-exporter-status {
     width: min(34rem, calc(100% - 2rem)); margin: 20vh auto; border: 1px solid #bbb; border-radius: .4rem;
     padding: 2rem; background: #fff; font: 16px/1.5 system-ui, sans-serif; text-align: center;
@@ -80,7 +97,8 @@ export class PrintView {
     `;
     this.#write(targetWindow, `${controls}<main class="character-exporter-document">${rendered.html}</main>`, {
       title: `${characterName} — ${localize("CHARACTER-EXPORTER.PrintView.TitleSuffix", "Character Sheet")}`,
-      stylesheets: rendered.stylesheets
+      stylesheets: rendered.stylesheets,
+      page: rendered.page
     });
 
     targetWindow.document.querySelector('[data-action="print"]')?.addEventListener("click", () => targetWindow.print());
@@ -101,7 +119,7 @@ export class PrintView {
     targetWindow.document.querySelector('[data-action="close"]')?.addEventListener("click", () => targetWindow.close());
   }
 
-  #write(targetWindow, body, { title, stylesheets = [] }) {
+  #write(targetWindow, body, { title, stylesheets = [], page = {} }) {
     if (!targetWindow || targetWindow.closed) throw new Error("The print window is not available");
     const base = new URL(this.#baseUri, globalThis.location?.href).href;
     const documentHtml = `<!doctype html>
@@ -111,7 +129,7 @@ export class PrintView {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <base href="${escapeHtml(base)}">
         <title>${escapeHtml(title)}</title>
-        <style>${SHELL_STYLE}</style>
+        <style>${pageVariables(page)}${SHELL_STYLE}</style>
         ${stylesheetLinks(stylesheets, base)}
       </head>
       <body>${body}</body>

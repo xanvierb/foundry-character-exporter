@@ -68,6 +68,17 @@ export function normalizeTemplateDefinition(input) {
     throw new TemplateDefinitionError("stylesheets must be an array", "stylesheets");
   }
 
+  const pageSize = String(input.page?.size ?? "A4").trim() || "A4";
+  if (!["A4", "Letter"].includes(pageSize)) {
+    throw new TemplateDefinitionError('page.size must be "A4" or "Letter"', "page.size");
+  }
+  const pageOrientation = String(input.page?.orientation ?? "portrait").trim() || "portrait";
+  if (!["portrait", "landscape"].includes(pageOrientation)) {
+    throw new TemplateDefinitionError(
+      'page.orientation must be "portrait" or "landscape"', "page.orientation"
+    );
+  }
+
   return Object.freeze({
     id,
     name,
@@ -79,8 +90,8 @@ export function normalizeTemplateDefinition(input) {
     template: assetPath(input.template, "template"),
     stylesheets: Object.freeze(stylesheetInput.map((path, index) => assetPath(path, `stylesheets.${index}`))),
     page: Object.freeze({
-      size: String(input.page?.size ?? "A4").trim() || "A4",
-      orientation: String(input.page?.orientation ?? "portrait").trim() || "portrait"
+      size: pageSize,
+      orientation: pageOrientation
     }),
     sourceModule: String(input.sourceModule ?? "").trim()
   });

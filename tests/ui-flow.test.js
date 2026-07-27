@@ -105,12 +105,15 @@ test("print view writes standalone HTML and wires non-printing Print and Close c
 
   new PrintView().render(targetWindow, {
     html: "<article><h1>Ada</h1></article>",
-    stylesheets: ["modules/character-exporter/templates/sheets/default/sheet.css"]
+    stylesheets: ["modules/character-exporter/templates/sheets/default/sheet.css"],
+    page: { size: "Letter", orientation: "portrait" }
   }, "Ada");
 
   assert.match(writtenHtml, /^<!doctype html>/u);
   assert.match(writtenHtml, /https:\/\/foundry\.example\/modules\/character-exporter\/templates\/sheets\/default\/sheet\.css/u);
   assert.match(writtenHtml, /character-exporter-controls \{ display: none !important; \}/u);
+  assert.match(writtenHtml, /--character-exporter-page-width: 215\.9mm/u);
+  assert.match(writtenHtml, /--character-exporter-page-height: 279\.4mm/u);
   assert.match(writtenHtml, /<article><h1>Ada<\/h1><\/article>/u);
   assert.equal(targetWindow.opener, null);
 
@@ -179,4 +182,3 @@ test("export service completes conversion, rendering, and print-view delivery", 
     ["printView", true, "Ada"]
   ]);
 });
-

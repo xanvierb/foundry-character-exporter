@@ -49,6 +49,11 @@ test("template registry rejects duplicates, traversal, protocols, and unsupporte
     id: "test.pdf",
     renderer: "pdf"
   }), /Unsupported renderer/u);
+  assert.throws(() => registry.register({
+    ...validTemplate,
+    id: "test.paper",
+    page: { size: "Legal", orientation: "portrait" }
+  }), /page\.size/u);
 });
 
 test("adapter registry selects highest-priority compatible adapter", () => {

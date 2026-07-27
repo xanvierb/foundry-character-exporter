@@ -95,6 +95,10 @@ Use natural document flow. Avoid fixed-height text boxes, line clamping, `overfl
 
 The print view supplies its own Print/Close toolbar and removes it under `@media print`; templates do not need controls or scripts.
 
+The declared `page.size` (`A4` or `Letter`) and `page.orientation` also size the standalone on-screen preview. The template stylesheet remains responsible for its matching `@page` rule.
+
+Available namespaced helpers are `characterExporterSigned`, `characterExporterJoin`, `characterExporterHas`, and `characterExporterEqual`. Prefer these over unnamespaced helpers whose availability can vary with the Foundry environment.
+
 ## Paths and assets
 
 Registration paths must begin with `modules/` or `systems/`. The registry rejects protocol URLs, data URLs, and traversal segments. Relative URLs in CSS resolve relative to the CSS file. Template image paths should be Foundry-resolvable package paths. The character portrait is available at `character.portrait` and may be absent.

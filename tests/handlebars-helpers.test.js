@@ -23,4 +23,9 @@ test("join helper ignores Handlebars' implicit options argument", t => {
   assert.equal(join(values, { hash: {} }), "Verbal, Somatic, Material");
   assert.equal(join(values, " / ", { hash: {} }), "Verbal / Somatic / Material");
   assert.equal(join(values, { hash: {} }).includes("[object Object]"), false);
+
+  const equal = helpers.get("characterExporterEqual");
+  assert.equal(equal(3, 3), true);
+  assert.equal(equal(3, "3"), true);
+  assert.equal(equal(3, 4), false);
 });

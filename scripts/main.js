@@ -1,5 +1,5 @@
 import {
-  BUILT_IN_TEMPLATE_METADATA,
+  BUILT_IN_TEMPLATE_METADATA_PATHS,
   CHARACTER_EXPORT_SCHEMA_VERSION,
   MODULE_ID
 } from "./constants.js";
@@ -7,6 +7,7 @@ import { createPublicApi } from "./api/public-api.js";
 import { AdapterRegistry } from "./adapters/adapter-registry.js";
 import { Dnd5eCharacterAdapter } from "./adapters/dnd5e-character-adapter.js";
 import { CharacterExportService } from "./export/character-export-service.js";
+import { loadBuiltInTemplate } from "./export/built-in-template-loader.js";
 import { HtmlTemplateRenderer } from "./export/html-template-renderer.js";
 import { TemplateRegistry } from "./export/template-registry.js";
 import { registerActorContextMenu } from "./foundry/actor-context-menu.js";
@@ -27,26 +28,20 @@ const exportService = new CharacterExportService({
   printView: new PrintView()
 });
 
-function resolveBuiltInAssets(metadata) {
-  const base = BUILT_IN_TEMPLATE_METADATA.slice(0, BUILT_IN_TEMPLATE_METADATA.lastIndexOf("/"));
-  const resolve = path => {
-    const value = String(path ?? "");
-    return value.startsWith("modules/") || value.startsWith("systems/") ? value : `${base}/${value}`;
-  };
-  const stylesheets = metadata.stylesheets ?? (metadata.stylesheet ? [metadata.stylesheet] : []);
-  return {
-    ...metadata,
-    template: resolve(metadata.template),
-    stylesheets: stylesheets.map(resolve),
-    sourceModule: MODULE_ID
-  };
-}
-
-async function registerBuiltInTemplate() {
-  const response = await fetch(BUILT_IN_TEMPLATE_METADATA);
-  if (!response.ok) throw new Error(`Unable to load built-in template metadata (${response.status})`);
-  const metadata = resolveBuiltInAssets(await response.json());
-  templateRegistry.register(metadata);
+async function registerBuiltInTemplates() {
+  const failures = [];
+  for (const metadataPath of BUILT_IN_TEMPLATE_METADATA_PATHS) {
+    try {
+      templateRegistry.register(await loadBuiltInTemplate(metadataPath));
+    } catch (error) {
+      failures.push({ metadataPath, error });
+      logger.error(`Failed to register built-in template ${metadataPath}`, error);
+    }
+  }
+  if (!templateRegistry.getTemplates().length) {
+    throw new AggregateError(failures.map(failure => failure.error), "No built-in templates could be registered");
+  }
+  if (failures.length) notify("warn", "CHARACTER-EXPORTER.Errors.BuiltInTemplatesPartial");
 }
 
 globalThis.Hooks.once("init", () => {
@@ -61,11 +56,11 @@ globalThis.Hooks.once("init", () => {
 
 globalThis.Hooks.once("ready", async () => {
   try {
-    await registerBuiltInTemplate();
+    await registerBuiltInTemplates();
     globalThis.Hooks.callAll(`${MODULE_ID}.ready`, api);
     logger.info("Ready");
   } catch (error) {
-    logger.error("Failed to register the built-in template", error);
+    logger.error("Failed to register built-in templates", error);
     notify("error", "CHARACTER-EXPORTER.Errors.BuiltInTemplateFailed");
   }
 });

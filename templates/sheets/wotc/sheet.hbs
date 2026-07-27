@@ -1,0 +1,531 @@
+<article class="ce-sheet dnd-sheet">
+  <section class="dnd-page dnd-page--character">
+    <header class="dnd-header">
+      <div class="dnd-brand" aria-hidden="true">
+        <span class="dnd-brand__dragon">◆</span>
+        <span class="dnd-brand__words">CLASSIC <i>•</i> RECORD</span>
+      </div>
+
+      <div class="dnd-banner dnd-banner--name">
+        <strong>{{character.name}}</strong>
+        <span>CHARACTER NAME</span>
+      </div>
+
+      <div class="dnd-banner dnd-banner--facts">
+        <div>
+          <strong>
+            {{#each character.classes}}
+              {{name}} {{level}}{{#if subclass}} ({{subclass}}){{/if}}{{#unless @last}} / {{/unless}}
+            {{/each}}
+          </strong>
+          <span>CLASS &amp; LEVEL</span>
+        </div>
+        <div><strong>{{character.background.name}}</strong><span>BACKGROUND</span></div>
+        <div><strong>{{character.playerName}}</strong><span>PLAYER NAME</span></div>
+        <div><strong>{{character.species.name}}</strong><span>RACE</span></div>
+        <div><strong>{{character.alignment}}</strong><span>ALIGNMENT</span></div>
+        <div><strong>{{character.experience.current}}</strong><span>EXPERIENCE POINTS</span></div>
+      </div>
+    </header>
+
+    <div class="dnd-character-grid">
+      <div class="dnd-ability-column">
+        {{#each abilities}}
+          <section class="dnd-ability ornate-box">
+            <h2>{{name}}</h2>
+            <strong>{{score}}</strong>
+            <span>{{characterExporterSigned modifier}}</span>
+          </section>
+        {{/each}}
+
+        <section class="dnd-passive dnd-ribbon">
+          <strong>{{combat.passivePerception}}</strong>
+          <span>PASSIVE WISDOM (PERCEPTION)</span>
+        </section>
+
+        <section class="dnd-proficiencies ornate-box">
+          <div class="dnd-copy">
+            {{#if proficiencies.armor.length}}<p><b>Armor:</b> {{characterExporterJoin proficiencies.armor}}</p>{{/if}}
+            {{#if proficiencies.weapons.length}}<p><b>Weapons:</b> {{characterExporterJoin proficiencies.weapons}}</p>{{/if}}
+            {{#if proficiencies.tools.length}}<p><b>Tools:</b> {{characterExporterJoin proficiencies.tools}}</p>{{/if}}
+            {{#if proficiencies.languages.length}}<p><b>Languages:</b> {{characterExporterJoin proficiencies.languages}}</p>{{/if}}
+            {{#if proficiencies.communication.length}}<p><b>Communication:</b> {{characterExporterJoin proficiencies.communication}}</p>{{/if}}
+            {{#if senses.length}}
+              <p><b>Senses:</b> {{#each senses}}{{name}}{{#if distance}} {{distance}} {{units}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}</p>
+            {{/if}}
+          </div>
+          <h2 class="dnd-box-label">OTHER PROFICIENCIES &amp; LANGUAGES</h2>
+        </section>
+      </div>
+
+      <div class="dnd-skill-column">
+        <section class="dnd-ribbon dnd-ribbon--inspiration">
+          <strong>{{#if character.inspiration}}●{{else}}○{{/if}}</strong>
+          <span>INSPIRATION</span>
+        </section>
+
+        <section class="dnd-ribbon dnd-ribbon--proficiency">
+          <strong>{{characterExporterSigned character.proficiencyBonus}}</strong>
+          <span>PROFICIENCY BONUS</span>
+        </section>
+
+        <section class="dnd-saving-throws ornate-box">
+          <div>
+            {{#each abilities}}
+              <p>
+                <i class="{{#if proficient}}is-filled{{/if}}"></i>
+                <strong>{{characterExporterSigned save}}</strong>
+                <span>{{name}}</span>
+              </p>
+            {{/each}}
+          </div>
+          <h2 class="dnd-box-label">SAVING THROWS</h2>
+        </section>
+
+        <section class="dnd-skills ornate-box">
+          <div>
+            {{#each skills}}
+              <p>
+                <i class="dnd-prof dnd-prof--{{proficiencyLabel}}"></i>
+                <strong>{{characterExporterSigned modifier}}</strong>
+                <span>{{name}} <small>({{ability}})</small></span>
+              </p>
+            {{/each}}
+          </div>
+          <h2 class="dnd-box-label">SKILLS</h2>
+        </section>
+      </div>
+
+      <div class="dnd-combat-column">
+        <section class="dnd-combat-stats dnd-group">
+          <div class="dnd-ac">
+            <strong>{{combat.armorClass}}</strong>
+            <span>ARMOR<br>CLASS</span>
+          </div>
+          <div class="dnd-stat-card">
+            <strong>{{characterExporterSigned combat.initiative}}</strong>
+            <span>INITIATIVE</span>
+          </div>
+          <div class="dnd-stat-card">
+            <strong>{{combat.speed.distance}}{{#if combat.speed.units}} <small>{{combat.speed.units}}</small>{{/if}}</strong>
+            <span>SPEED</span>
+          </div>
+        </section>
+
+        <section class="dnd-hp dnd-group">
+          <div class="dnd-hp-max"><span>Hit Point Maximum</span><strong>{{combat.hp.maximum}}</strong></div>
+          <div class="dnd-hp-current"><strong>{{combat.hp.current}}</strong><span>CURRENT HIT POINTS</span></div>
+          <div class="dnd-hp-temp"><strong>{{combat.hp.temporary}}</strong><span>TEMPORARY HIT POINTS</span></div>
+        </section>
+
+        <section class="dnd-recovery dnd-group">
+          <div class="ornate-box dnd-hit-dice">
+            <div>
+              {{#each combat.hitDice}}
+                <span>{{current}} / {{maximum}} {{denomination}}</span>
+              {{/each}}
+            </div>
+            <h2 class="dnd-box-label">HIT DICE</h2>
+          </div>
+          <div class="ornate-box dnd-death-saves">
+            <p><span>SUCCESSES</span><i></i><i></i><i></i><b>{{combat.deathSaves.successes}}</b></p>
+            <p><span>FAILURES</span><i></i><i></i><i></i><b>{{combat.deathSaves.failures}}</b></p>
+            <h2 class="dnd-box-label">DEATH SAVES</h2>
+          </div>
+        </section>
+
+        <section class="dnd-attacks ornate-box">
+          <div class="dnd-mini-table">
+            <div class="dnd-mini-table__head"><span>NAME</span><span>ATK BONUS</span><span>DAMAGE/TYPE</span></div>
+            {{#each attacks}}
+              <div class="dnd-mini-table__row">
+                <span>{{name}}</span>
+                <span>{{attackFormula}}</span>
+                <span>{{#each damage}}{{label}}{{#unless @last}}, {{/unless}}{{/each}}</span>
+              </div>
+            {{/each}}
+          </div>
+          <h2 class="dnd-box-label">ATTACKS &amp; SPELLCASTING</h2>
+        </section>
+
+        <section class="dnd-equipment ornate-box">
+          <div class="dnd-currency">
+            {{#each currency.denominations}}
+              <p><span>{{id}}</span><strong>{{value}}</strong></p>
+            {{/each}}
+          </div>
+          <div class="dnd-equipment-list">
+            {{#each inventory}}
+              <p><strong>{{name}}</strong>{{#if quantity}} <span>×{{quantity}}</span>{{/if}}</p>
+            {{/each}}
+          </div>
+          <h2 class="dnd-box-label">EQUIPMENT</h2>
+        </section>
+      </div>
+
+      <div class="dnd-traits-column">
+        <section class="dnd-trait ornate-box"><p>{{notes.personalityTraits}}</p><h2 class="dnd-box-label">PERSONALITY TRAITS</h2></section>
+        <section class="dnd-trait ornate-box"><p>{{notes.ideals}}</p><h2 class="dnd-box-label">IDEALS</h2></section>
+        <section class="dnd-trait ornate-box"><p>{{notes.bonds}}</p><h2 class="dnd-box-label">BONDS</h2></section>
+        <section class="dnd-trait ornate-box"><p>{{notes.flaws}}</p><h2 class="dnd-box-label">FLAWS</h2></section>
+
+        <section class="dnd-features ornate-box">
+          <div class="dnd-feature-names">
+            {{#each features}}
+              <p><strong>{{name}}</strong>{{#if requirements}} <span>({{requirements}})</span>{{/if}}</p>
+            {{/each}}
+            {{#if defenses.damageResistances.length}}<p><strong>Resistances:</strong> {{characterExporterJoin defenses.damageResistances}}</p>{{/if}}
+            {{#if defenses.damageImmunities.length}}<p><strong>Immunities:</strong> {{characterExporterJoin defenses.damageImmunities}}</p>{{/if}}
+            {{#if defenses.conditionImmunities.length}}<p><strong>Condition immunities:</strong> {{characterExporterJoin defenses.conditionImmunities}}</p>{{/if}}
+          </div>
+          <h2 class="dnd-box-label">FEATURES &amp; TRAITS</h2>
+        </section>
+      </div>
+    </div>
+
+    <footer class="dnd-footer">CLASSIC CHARACTER RECORD · ORIGINAL EXPORT TEMPLATE</footer>
+  </section>
+
+  <section class="dnd-page dnd-page--details">
+    <header class="dnd-header dnd-header--details">
+      <div class="dnd-brand dnd-brand--compact" aria-hidden="true">
+        <span class="dnd-brand__dragon">◆</span>
+        <span class="dnd-brand__words">CLASSIC</span>
+      </div>
+
+      <div class="dnd-banner dnd-banner--name">
+        <strong>{{character.name}}</strong>
+        <span>CHARACTER NAME</span>
+      </div>
+
+      <div class="dnd-banner dnd-banner--facts dnd-banner--details">
+        <div><strong>{{notes.age}}</strong><span>AGE</span></div>
+        <div><strong>{{notes.height}}</strong><span>HEIGHT</span></div>
+        <div><strong>{{notes.weight}}</strong><span>WEIGHT</span></div>
+        <div><strong>{{notes.eyes}}</strong><span>EYES</span></div>
+        <div><strong>{{notes.skin}}</strong><span>SKIN</span></div>
+        <div><strong>{{notes.hair}}</strong><span>HAIR</span></div>
+      </div>
+    </header>
+
+    <div class="dnd-details-grid">
+      <section class="dnd-appearance ornate-box">
+        {{#if character.portrait}}
+          <img src="{{character.portrait}}" alt="">
+        {{else}}
+          <div class="dnd-portrait-placeholder" aria-hidden="true">✦</div>
+        {{/if}}
+        {{#if notes.appearance}}<p>{{notes.appearance}}</p>{{/if}}
+        <h2 class="dnd-box-label">CHARACTER APPEARANCE</h2>
+      </section>
+
+      <section class="dnd-allies ornate-box">
+        <div class="dnd-copy">
+          {{#if character.species.description}}<h3>{{character.species.name}}</h3>{{{character.species.description}}}{{/if}}
+          {{#if character.background.description}}<h3>{{character.background.name}}</h3>{{{character.background.description}}}{{/if}}
+          {{#if notes.faith}}<p><strong>Faith:</strong> {{notes.faith}}</p>{{/if}}
+        </div>
+        <h2 class="dnd-box-label">ORIGINS &amp; FAITH</h2>
+      </section>
+
+      <section class="dnd-backstory ornate-box">
+        <div class="dnd-copy dnd-rich-text">{{{notes.biography}}}</div>
+        <h2 class="dnd-box-label">CHARACTER BACKSTORY</h2>
+      </section>
+
+      <section class="dnd-additional-features ornate-box">
+        <div class="dnd-feature-details">
+          {{#each features}}
+            <article>
+              <h3>{{name}}</h3>
+              {{#if description}}<div class="dnd-rich-text">{{{description}}}</div>{{/if}}
+            </article>
+          {{/each}}
+        </div>
+        <h2 class="dnd-box-label">ADDITIONAL FEATURES &amp; TRAITS</h2>
+      </section>
+
+      <section class="dnd-treasure ornate-box">
+        <div class="dnd-treasure-currency">
+          {{#each currency.denominations}}<span><strong>{{value}}</strong> {{id}}</span>{{/each}}
+        </div>
+        <h2 class="dnd-box-label">TREASURE</h2>
+      </section>
+    </div>
+
+    <footer class="dnd-footer">CLASSIC CHARACTER RECORD · DETAILS</footer>
+  </section>
+
+  {{#if spellcasting.ability}}
+    <section class="dnd-page dnd-page--spells">
+      <header class="dnd-header dnd-header--spells">
+        <div class="dnd-brand dnd-brand--compact" aria-hidden="true">
+          <span class="dnd-brand__dragon">◆</span>
+          <span class="dnd-brand__words">CLASSIC</span>
+        </div>
+
+        <div class="dnd-banner dnd-banner--name dnd-banner--spellclass">
+          <strong>{{#each spellcasting.classes}}{{name}}{{#unless @last}} / {{/unless}}{{/each}}</strong>
+          <span>SPELLCASTING CLASS</span>
+        </div>
+
+        <div class="dnd-banner dnd-banner--spellfacts">
+          <div><strong>{{spellcasting.abilityName}}</strong><span>SPELLCASTING<br>ABILITY</span></div>
+          <div><strong>{{spellcasting.saveDc}}</strong><span>SPELL SAVE DC</span></div>
+          <div><strong>{{characterExporterSigned spellcasting.attackBonus}}</strong><span>SPELL ATTACK<br>BONUS</span></div>
+        </div>
+      </header>
+
+      <div class="dnd-spell-grid">
+        <div class="dnd-spell-column">
+          <section class="dnd-spell-level dnd-spell-level--0">
+            <header><b>0</b><strong>CANTRIPS</strong></header>
+            <ul>
+              {{#each spells}}{{#if (characterExporterEqual level 0)}}<li><span class="{{#if prepared}}is-prepared{{/if}}"></span><b>{{name}}</b></li>{{/if}}{{/each}}
+            </ul>
+          </section>
+
+          <section class="dnd-spell-level dnd-spell-level--1">
+            <header>
+              <b>1</b>
+              <span>SLOTS TOTAL <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 1)}}{{maximum}}{{/if}}{{/each}}</strong></span>
+              <span>SLOTS AVAILABLE <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 1)}}{{current}} / {{maximum}}{{/if}}{{/each}}</strong></span>
+            </header>
+            <ul>
+              {{#each spells}}{{#if (characterExporterEqual level 1)}}<li><span class="{{#if prepared}}is-prepared{{/if}}"></span><b>{{name}}</b></li>{{/if}}{{/each}}
+            </ul>
+          </section>
+
+          <section class="dnd-spell-level dnd-spell-level--2">
+            <header>
+              <b>2</b>
+              <span>SLOTS TOTAL <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 2)}}{{maximum}}{{/if}}{{/each}}</strong></span>
+              <span>SLOTS AVAILABLE <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 2)}}{{current}} / {{maximum}}{{/if}}{{/each}}</strong></span>
+            </header>
+            <ul>
+              {{#each spells}}{{#if (characterExporterEqual level 2)}}<li><span class="{{#if prepared}}is-prepared{{/if}}"></span><b>{{name}}</b></li>{{/if}}{{/each}}
+            </ul>
+          </section>
+        </div>
+
+        <div class="dnd-spell-column">
+          <section class="dnd-spell-level dnd-spell-level--3">
+            <header>
+              <b>3</b>
+              <span>SLOTS TOTAL <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 3)}}{{maximum}}{{/if}}{{/each}}</strong></span>
+              <span>SLOTS AVAILABLE <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 3)}}{{current}} / {{maximum}}{{/if}}{{/each}}</strong></span>
+            </header>
+            <ul>
+              {{#each spells}}{{#if (characterExporterEqual level 3)}}<li><span class="{{#if prepared}}is-prepared{{/if}}"></span><b>{{name}}</b></li>{{/if}}{{/each}}
+            </ul>
+          </section>
+
+          <section class="dnd-spell-level dnd-spell-level--4">
+            <header>
+              <b>4</b>
+              <span>SLOTS TOTAL <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 4)}}{{maximum}}{{/if}}{{/each}}</strong></span>
+              <span>SLOTS AVAILABLE <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 4)}}{{current}} / {{maximum}}{{/if}}{{/each}}</strong></span>
+            </header>
+            <ul>
+              {{#each spells}}{{#if (characterExporterEqual level 4)}}<li><span class="{{#if prepared}}is-prepared{{/if}}"></span><b>{{name}}</b></li>{{/if}}{{/each}}
+            </ul>
+          </section>
+
+          <section class="dnd-spell-level dnd-spell-level--5">
+            <header>
+              <b>5</b>
+              <span>SLOTS TOTAL <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 5)}}{{maximum}}{{/if}}{{/each}}</strong></span>
+              <span>SLOTS AVAILABLE <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 5)}}{{current}} / {{maximum}}{{/if}}{{/each}}</strong></span>
+            </header>
+            <ul>
+              {{#each spells}}{{#if (characterExporterEqual level 5)}}<li><span class="{{#if prepared}}is-prepared{{/if}}"></span><b>{{name}}</b></li>{{/if}}{{/each}}
+            </ul>
+          </section>
+        </div>
+
+        <div class="dnd-spell-column">
+          <section class="dnd-spell-level dnd-spell-level--6">
+            <header>
+              <b>6</b>
+              <span>SLOTS TOTAL <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 6)}}{{maximum}}{{/if}}{{/each}}</strong></span>
+              <span>SLOTS AVAILABLE <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 6)}}{{current}} / {{maximum}}{{/if}}{{/each}}</strong></span>
+            </header>
+            <ul>
+              {{#each spells}}{{#if (characterExporterEqual level 6)}}<li><span class="{{#if prepared}}is-prepared{{/if}}"></span><b>{{name}}</b></li>{{/if}}{{/each}}
+            </ul>
+          </section>
+
+          <section class="dnd-spell-level dnd-spell-level--7">
+            <header>
+              <b>7</b>
+              <span>SLOTS TOTAL <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 7)}}{{maximum}}{{/if}}{{/each}}</strong></span>
+              <span>SLOTS AVAILABLE <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 7)}}{{current}} / {{maximum}}{{/if}}{{/each}}</strong></span>
+            </header>
+            <ul>
+              {{#each spells}}{{#if (characterExporterEqual level 7)}}<li><span class="{{#if prepared}}is-prepared{{/if}}"></span><b>{{name}}</b></li>{{/if}}{{/each}}
+            </ul>
+          </section>
+
+          <section class="dnd-spell-level dnd-spell-level--8">
+            <header>
+              <b>8</b>
+              <span>SLOTS TOTAL <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 8)}}{{maximum}}{{/if}}{{/each}}</strong></span>
+              <span>SLOTS AVAILABLE <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 8)}}{{current}} / {{maximum}}{{/if}}{{/each}}</strong></span>
+            </header>
+            <ul>
+              {{#each spells}}{{#if (characterExporterEqual level 8)}}<li><span class="{{#if prepared}}is-prepared{{/if}}"></span><b>{{name}}</b></li>{{/if}}{{/each}}
+            </ul>
+          </section>
+
+          <section class="dnd-spell-level dnd-spell-level--9">
+            <header>
+              <b>9</b>
+              <span>SLOTS TOTAL <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 9)}}{{maximum}}{{/if}}{{/each}}</strong></span>
+              <span>SLOTS AVAILABLE <strong>{{#each spellcasting.slots}}{{#if (characterExporterEqual level 9)}}{{current}} / {{maximum}}{{/if}}{{/each}}</strong></span>
+            </header>
+            <ul>
+              {{#each spells}}{{#if (characterExporterEqual level 9)}}<li><span class="{{#if prepared}}is-prepared{{/if}}"></span><b>{{name}}</b></li>{{/if}}{{/each}}
+            </ul>
+          </section>
+        </div>
+      </div>
+
+      <footer class="dnd-footer">CLASSIC CHARACTER RECORD · SPELLS</footer>
+    </section>
+  {{/if}}
+
+  <section class="classic-continuation">
+    <header class="classic-continuation__header">
+      <p>CLASSIC CHARACTER RECORD</p>
+      <h2>Equipment &amp; combat reference</h2>
+      <strong>{{character.name}} · Level {{character.level}}</strong>
+    </header>
+
+    {{#if attacks.length}}
+      <section class="classic-reference-section">
+        <h3>Attacks &amp; actions</h3>
+        <table class="classic-table">
+          <thead><tr><th>Name</th><th>Bonus</th><th>Range</th><th>Damage / effect</th></tr></thead>
+          <tbody>
+            {{#each attacks}}
+              <tr>
+                <td><strong>{{name}}</strong></td>
+                <td>{{attackFormula}}</td>
+                <td>{{range.label}}</td>
+                <td>{{#each damage}}{{label}}{{#unless @last}}, {{/unless}}{{/each}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </section>
+    {{/if}}
+
+    <div class="classic-reference-grid">
+      <section class="classic-reference-section">
+        <h3>Proficiencies &amp; senses</h3>
+        {{#if proficiencies.armor.length}}<p><strong>Armor:</strong> {{characterExporterJoin proficiencies.armor}}</p>{{/if}}
+        {{#if proficiencies.weapons.length}}<p><strong>Weapons:</strong> {{characterExporterJoin proficiencies.weapons}}</p>{{/if}}
+        {{#if proficiencies.tools.length}}<p><strong>Tools:</strong> {{characterExporterJoin proficiencies.tools}}</p>{{/if}}
+        {{#if proficiencies.languages.length}}<p><strong>Languages:</strong> {{characterExporterJoin proficiencies.languages}}</p>{{/if}}
+        {{#if senses.length}}<p><strong>Senses:</strong> {{#each senses}}{{name}}{{#if distance}} {{distance}} {{units}}{{/if}}{{#if details}} — {{details}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}</p>{{/if}}
+      </section>
+      <section class="classic-reference-section">
+        <h3>Resources &amp; defenses</h3>
+        {{#each resources}}<p><strong>{{name}}:</strong> {{current}} / {{maximum}}</p>{{/each}}
+        {{#if defenses.damageResistances.length}}<p><strong>Resistances:</strong> {{characterExporterJoin defenses.damageResistances}}</p>{{/if}}
+        {{#if defenses.damageImmunities.length}}<p><strong>Damage immunities:</strong> {{characterExporterJoin defenses.damageImmunities}}</p>{{/if}}
+        {{#if defenses.damageVulnerabilities.length}}<p><strong>Vulnerabilities:</strong> {{characterExporterJoin defenses.damageVulnerabilities}}</p>{{/if}}
+        {{#if defenses.conditionImmunities.length}}<p><strong>Condition immunities:</strong> {{characterExporterJoin defenses.conditionImmunities}}</p>{{/if}}
+      </section>
+    </div>
+
+    {{#if inventory.length}}
+      <section class="classic-reference-section">
+        <h3>Complete inventory</h3>
+        <div class="classic-entry-list">
+          {{#each inventory}}
+            <article class="classic-entry">
+              <header>
+                <h4>{{name}}</h4>
+                <p>{{typeName}} · Qty {{quantity}} · {{weight.total}} {{weight.units}} · {{price.value}} {{price.denomination}}</p>
+              </header>
+              {{#if container}}<p class="classic-muted">Stored in {{container.name}}</p>{{/if}}
+              {{#if properties.length}}<p class="classic-muted">{{characterExporterJoin properties}}</p>{{/if}}
+              {{#if description}}<div class="classic-rich-text">{{{description}}}</div>{{/if}}
+            </article>
+          {{/each}}
+        </div>
+      </section>
+    {{/if}}
+  </section>
+
+  {{#if features.length}}
+    <section class="classic-continuation">
+      <header class="classic-continuation__header">
+        <p>CLASSIC CHARACTER RECORD</p>
+        <h2>Features &amp; feats</h2>
+        <strong>{{character.name}}</strong>
+      </header>
+      <div class="classic-entry-list">
+        {{#each features}}
+          <article class="classic-entry">
+            <header>
+              <h3>{{name}}</h3>
+              <p>{{categoryName}}{{#if requirements}} · {{requirements}}{{/if}}{{#if uses}} · {{uses.current}} / {{uses.maximum}} uses{{/if}}</p>
+            </header>
+            {{#if description}}<div class="classic-rich-text">{{{description}}}</div>{{/if}}
+          </article>
+        {{/each}}
+      </div>
+    </section>
+  {{/if}}
+
+  <section class="classic-continuation">
+    <header class="classic-continuation__header">
+      <p>CLASSIC CHARACTER RECORD</p>
+      <h2>Character narrative</h2>
+      <strong>{{character.name}}</strong>
+    </header>
+    <div class="classic-note-grid">
+      <article><h3>Personality traits</h3><p>{{notes.personalityTraits}}</p></article>
+      <article><h3>Ideals</h3><p>{{notes.ideals}}</p></article>
+      <article><h3>Bonds</h3><p>{{notes.bonds}}</p></article>
+      <article><h3>Flaws</h3><p>{{notes.flaws}}</p></article>
+    </div>
+    {{#if notes.appearance}}<section class="classic-reference-section"><h3>Appearance</h3><p>{{notes.appearance}}</p></section>{{/if}}
+    {{#if notes.faith}}<section class="classic-reference-section"><h3>Faith</h3><p>{{notes.faith}}</p></section>{{/if}}
+    {{#if character.species.description}}<section class="classic-reference-section"><h3>{{character.species.name}}</h3><div class="classic-rich-text">{{{character.species.description}}}</div></section>{{/if}}
+    {{#if character.background.description}}<section class="classic-reference-section"><h3>{{character.background.name}}</h3><div class="classic-rich-text">{{{character.background.description}}}</div></section>{{/if}}
+    {{#if notes.biography}}<section class="classic-reference-section"><h3>Biography</h3><div class="classic-rich-text">{{{notes.biography}}}</div></section>{{/if}}
+    {{#if notes.publicBiography}}<section class="classic-reference-section"><h3>Public biography</h3><div class="classic-rich-text">{{{notes.publicBiography}}}</div></section>{{/if}}
+  </section>
+
+  {{#if spells.length}}
+    <section class="classic-continuation">
+      <header class="classic-continuation__header">
+        <p>CLASSIC CHARACTER RECORD</p>
+        <h2>Complete spellbook</h2>
+        <strong>{{character.name}} · {{spellcasting.abilityName}} · DC {{spellcasting.saveDc}} · {{characterExporterSigned spellcasting.attackBonus}}</strong>
+      </header>
+      {{#if spellcasting.slots.length}}<p class="classic-slot-line">{{#each spellcasting.slots}}<span><strong>{{label}}:</strong> {{current}} / {{maximum}}</span>{{/each}}</p>{{/if}}
+      <div class="classic-entry-list">
+        {{#each spells}}
+          <article class="classic-entry">
+            <header>
+              <h3>{{name}}</h3>
+              <p>{{levelName}} · {{schoolName}}{{#if prepared}} · Prepared{{/if}}{{#if ritual}} · Ritual{{/if}}{{#if concentration}} · Concentration{{/if}}</p>
+            </header>
+            <dl class="classic-spell-facts">
+              {{#if activation.label}}<div><dt>Casting</dt><dd>{{activation.label}}</dd></div>{{/if}}
+              {{#if range.label}}<div><dt>Range</dt><dd>{{range.label}}</dd></div>{{/if}}
+              {{#if duration.label}}<div><dt>Duration</dt><dd>{{duration.label}}</dd></div>{{/if}}
+              {{#if components.length}}<div><dt>Components</dt><dd>{{characterExporterJoin components}}</dd></div>{{/if}}
+            </dl>
+            {{#if materials}}<p class="classic-muted"><strong>Material:</strong> {{materials}}</p>{{/if}}
+            {{#if description}}<div class="classic-rich-text">{{{description}}}</div>{{/if}}
+          </article>
+        {{/each}}
+      </div>
+    </section>
+  {{/if}}
+</article>

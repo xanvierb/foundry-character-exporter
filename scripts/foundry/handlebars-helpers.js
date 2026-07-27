@@ -16,4 +16,5 @@ export function registerHandlebarsHelpers() {
     if (Array.isArray(value) || value instanceof Set || value instanceof Map) return value.size ?? value.length;
     return Boolean(value && (typeof value !== "object" || Object.keys(value).length));
   });
+  handlebars.registerHelper("characterExporterEqual", (left, right) => String(left) === String(right));
 }

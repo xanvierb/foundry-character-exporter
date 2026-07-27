@@ -36,7 +36,12 @@ A packaged release can be installed from its manifest URL once the project is pu
 
 Allow pop-ups for the Foundry origin if the browser blocks the print view. Export is deliberately not printed automatically.
 
-The bundled **Wayfarer Character Folio** is an original A4 layout. It is designed for color and grayscale, uses natural browser pagination, repeats table headings where supported, and does not discard long inventory, feature, spell, or biography content.
+Two original templates are bundled:
+
+- **Wayfarer Character Folio** is an A4 design with a compact play overview and naturally paginated details.
+- **Classic Character Record** is a traditional Letter-size three-page summary followed by complete, naturally paginated equipment, feature, narrative, and spell appendices.
+
+Both work in color and grayscale and preserve long character content rather than silently truncating it.
 
 ## Architecture
 
@@ -156,11 +161,12 @@ The built-in metadata file demonstrates the on-disk format:
 
 Relative `template` and `stylesheet` values are a convenience used by the bundled metadata loader. Third-party calls to `registerTemplate` use full `modules/...` or `systems/...` paths. `stylesheets` may be used instead of `stylesheet` to load more than one CSS file.
 
-Foundry's existing Handlebars environment is used. The module registers only three namespaced helpers:
+Foundry's existing Handlebars environment is used. The module registers four namespaced helpers:
 
 - `characterExporterSigned value` — formats `3` as `+3`.
 - `characterExporterJoin values` — joins strings or objects with a `name` property.
 - `characterExporterHas value` — tests whether a collection-like normalized value is non-empty.
+- `characterExporterEqual left right` — compares values for level/group filtering without relying on an unnamespaced Foundry helper.
 
 Business rules belong in an adapter, not a template. A template's root context is exactly CharacterExportData.
 
@@ -180,7 +186,7 @@ Templates are trusted assets installed by a Foundry administrator. Metadata cann
 
 ## Copyright
 
-This module does **not** bundle, trace, or reproduce official Wizards of the Coast character-sheet artwork or layouts. The Wayfarer template is an original design. D&D and related marks belong to their respective owners; no affiliation or endorsement is implied.
+This module does **not** bundle, trace, or reproduce official Wizards of the Coast character-sheet artwork or assets. Wayfarer and Classic are original HTML/CSS designs created for this exporter. The Classic template uses generic record-sheet conventions and carries no official logo or claimed Wizards of the Coast authorship. D&D and related marks belong to their respective owners; no affiliation or endorsement is implied.
 
 ## Development
 

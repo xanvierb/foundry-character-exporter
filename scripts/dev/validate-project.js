@@ -1,4 +1,4 @@
-import { readFile, access } from "node:fs/promises";
+import { readFile, access, readdir } from "node:fs/promises";
 import { constants as fsConstants } from "node:fs";
 
 const requiredFiles = [
@@ -11,6 +11,9 @@ const requiredFiles = [
   "templates/sheets/default/template.json",
   "templates/sheets/default/sheet.hbs",
   "templates/sheets/default/sheet.css",
+  "templates/sheets/wotc/template.json",
+  "templates/sheets/wotc/sheet.hbs",
+  "templates/sheets/wotc/sheet.css",
   "styles/module.css",
   "docs/character-export-data-schema.md",
   "docs/template-authoring.md"
@@ -21,7 +24,6 @@ for (const file of requiredFiles) await access(file, fsConstants.R_OK);
 const manifest = JSON.parse(await readFile("module.json", "utf8"));
 const packageMetadata = JSON.parse(await readFile("package.json", "utf8"));
 const language = JSON.parse(await readFile("lang/en.json", "utf8"));
-const template = JSON.parse(await readFile("templates/sheets/default/template.json", "utf8"));
 
 if (manifest.id !== "character-exporter") throw new Error("module.json id must be character-exporter");
 if (packageMetadata.version !== manifest.version) {
@@ -45,13 +47,45 @@ if (dnd5eRelationship.compatibility?.minimum !== "5.1.9") {
   throw new Error("module.json must declare dnd5e 5.1.9 as the minimum supported system version");
 }
 if (!language["CHARACTER-EXPORTER"]) throw new Error("English localization namespace is missing");
-if (template.schemaVersion !== 1 || template.renderer !== "html") {
-  throw new Error("Built-in template must target CharacterExportData schema 1 and the HTML renderer");
+const sheetDirectories = (await readdir("templates/sheets", { withFileTypes: true }))
+  .filter(entry => entry.isDirectory())
+  .map(entry => entry.name)
+  .sort();
+const templateIds = new Set();
+function assertBalancedHandlebars(source, name) {
+  const stack = [];
+  for (const match of source.matchAll(/\{\{([#/])(if|unless|each)\b/gu)) {
+    const [, direction, block] = match;
+    if (direction === "#") stack.push(block);
+    else if (stack.pop() !== block) throw new Error(`${name} contains an unbalanced Handlebars ${block} block`);
+  }
+  if (stack.length) throw new Error(`${name} contains unclosed Handlebars blocks: ${stack.join(", ")}`);
 }
 
-const sheet = await readFile("templates/sheets/default/sheet.hbs", "utf8");
-if (/\bactor(?:\.|\b)/iu.test(sheet) || /\bsystem\./iu.test(sheet)) {
-  throw new Error("Sheet templates must not access Actor or system internals");
+for (const directory of sheetDirectories) {
+  const base = `templates/sheets/${directory}`;
+  const template = JSON.parse(await readFile(`${base}/template.json`, "utf8"));
+  if (template.schemaVersion !== 1 || template.renderer !== "html") {
+    throw new Error(`${directory} template must target CharacterExportData schema 1 and the HTML renderer`);
+  }
+  if (templateIds.has(template.id)) throw new Error(`Duplicate built-in template id: ${template.id}`);
+  templateIds.add(template.id);
+  await access(`${base}/${template.template}`, fsConstants.R_OK);
+  const stylesheets = template.stylesheets ?? (template.stylesheet ? [template.stylesheet] : []);
+  for (const stylesheet of stylesheets) await access(`${base}/${stylesheet}`, fsConstants.R_OK);
+
+  const sheet = await readFile(`${base}/${template.template}`, "utf8");
+  assertBalancedHandlebars(sheet, directory);
+  if (/\bactor(?:\.|\b)/iu.test(sheet) || /\bsystem\./iu.test(sheet)) {
+    throw new Error(`${directory} sheet template must not access Actor or system internals`);
+  }
+
+  for (const stylesheet of stylesheets) {
+    const css = await readFile(`${base}/${stylesheet}`, "utf8");
+    for (const requiredRule of ["@page", "@media print", "break-inside", "break-before"]) {
+      if (!css.includes(requiredRule)) throw new Error(`${directory} print CSS is missing ${requiredRule}`);
+    }
+  }
 }
 
 const scriptFiles = [
@@ -65,9 +99,7 @@ for (const file of scriptFiles) {
   if (/\beval\s*\(|new\s+Function\b/u.test(source)) throw new Error(`Unsafe dynamic execution found in ${file}`);
 }
 
-const css = await readFile("templates/sheets/default/sheet.css", "utf8");
-for (const requiredRule of ["@page", "@media print", "break-inside", "break-before"]) {
-  if (!css.includes(requiredRule)) throw new Error(`Built-in print CSS is missing ${requiredRule}`);
-}
-
-console.log(`Validated ${requiredFiles.length} required files, manifests, schema metadata, template isolation, and print CSS.`);
+console.log(
+  `Validated ${requiredFiles.length} required files and ${sheetDirectories.length} built-in templates, `
+  + "including manifests, schema metadata, template isolation, and print CSS."
+);

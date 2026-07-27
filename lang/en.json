@@ -27,6 +27,7 @@
       "PermissionDenied": "You do not have permission to export this character.",
       "NoAdapter": "No compatible character exporter is available for this Actor.",
       "NoTemplates": "No compatible export templates are registered.",
+      "BuiltInTemplatesPartial": "One or more bundled export templates could not be loaded. Other templates remain available.",
       "DialogFailed": "The template selection dialog could not be opened.",
       "PopupBlocked": "The print view was blocked by the browser. Allow pop-ups for Foundry VTT and try again.",
       "TemplateMissing": "Template “{id}” is no longer registered.",
@@ -41,6 +42,10 @@
       "Default": {
         "Name": "Wayfarer Character Folio",
         "Description": "A polished A4 folio with a compact play overview and naturally paginated details."
+      },
+      "Classic": {
+        "Name": "Classic Character Record",
+        "Description": "A traditional Letter-size three-page summary with complete, naturally paginated appendices."
       }
     },
     "Sheet": {
