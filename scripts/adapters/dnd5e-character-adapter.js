@@ -10,6 +10,7 @@ import {
   integer,
   optionalNumber,
   proficiencyLabel,
+  roundedNumber,
   sortByName,
   splitList,
   text,
@@ -331,14 +332,17 @@ function normalizeInventory(actor) {
       type: text(item.type),
       typeName: configLabel(globalThis.CONFIG?.Item?.typeLabels, item.type, item.type),
       image: text(item.img),
-      quantity: finiteNumber(system.quantity, 1),
+      quantity: roundedNumber(system.quantity, 1),
       weight: {
-        value: finiteNumber(system.weight?.value),
-        total: finiteNumber(system.totalWeight, finiteNumber(system.weight?.value) * finiteNumber(system.quantity, 1)),
+        value: roundedNumber(system.weight?.value),
+        total: roundedNumber(
+          system.totalWeight,
+          finiteNumber(system.weight?.value) * finiteNumber(system.quantity, 1)
+        ),
         units: text(system.weight?.units)
       },
       price: {
-        value: finiteNumber(system.price?.value),
+        value: roundedNumber(system.price?.value),
         denomination: text(system.price?.denomination)
       },
       rarity: configLabel(config.itemRarity, system.rarity, text(system.rarity)),

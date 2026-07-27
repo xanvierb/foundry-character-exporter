@@ -5,6 +5,7 @@
 
 :root {
   --dnd-ink: #111;
+  --dnd-charcoal: #4b4b4b;
   --dnd-gray: #d9dada;
   --dnd-light: #ededed;
   --dnd-line: #a7a7a7;
@@ -88,21 +89,26 @@
   grid-column: 1;
   grid-row: 1;
   align-items: center;
-  padding-left: 6mm;
+  padding-left: 3mm;
   font-family: Georgia, "Times New Roman", serif;
   font-weight: 900;
 }
 
-.dnd-brand__dragon {
-  margin-right: 0.8mm;
-  font-size: 15pt;
-  font-style: italic;
-  line-height: 1;
-  transform: rotate(-8deg);
+.dnd-brand__crest {
+  width: 16mm;
+  height: 12mm;
+  flex: 0 0 16mm;
+  margin-right: 0.5mm;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: square;
+  stroke-linejoin: bevel;
+  stroke-width: 4;
 }
 
 .dnd-brand__words {
-  font-size: 12pt;
+  font-size: 12.5pt;
   letter-spacing: -0.07em;
   white-space: nowrap;
 }
@@ -119,6 +125,7 @@
   position: relative;
   border: 0.55mm solid var(--dnd-ink);
   background: #fff;
+  filter: drop-shadow(0.8mm 0.9mm 0 var(--dnd-gray));
   clip-path: polygon(2mm 0, calc(100% - 2mm) 0, 100% 2mm, 100% calc(100% - 2mm), calc(100% - 2mm) 100%, 2mm 100%, 0 calc(100% - 2mm), 0 2mm);
 }
 
@@ -193,6 +200,7 @@
   min-height: 0;
   border: 0.55mm solid var(--dnd-ink);
   background: #fff;
+  filter: drop-shadow(0.7mm 0.8mm 0 var(--dnd-gray));
   clip-path: polygon(2mm 0, calc(100% - 2mm) 0, 100% 2mm, 100% calc(100% - 2mm), calc(100% - 2mm) 100%, 2mm 100%, 0 calc(100% - 2mm), 0 2mm);
 }
 
@@ -219,7 +227,7 @@
 
 .dnd-character-grid {
   display: grid;
-  grid-template-columns: 21mm 41mm 63mm 63mm;
+  grid-template-columns: 21mm 43mm 64mm 63.4mm;
   gap: 2.5mm;
   width: 100%;
   height: 226mm;
@@ -332,7 +340,7 @@
 
 .dnd-passive {
   z-index: 4;
-  width: 64.5mm;
+  width: 66.5mm;
   height: 9mm;
   flex-basis: 9mm;
   margin-top: 0.6mm;
@@ -349,7 +357,7 @@
 
 .dnd-proficiencies {
   z-index: 4;
-  width: 64.5mm;
+  width: 66.5mm;
   height: 55.5mm;
   flex: 1 1 auto;
   margin-top: 0.7mm;
@@ -373,7 +381,13 @@
 
 .dnd-ribbon--inspiration,
 .dnd-ribbon--proficiency {
+  width: calc(100% - 1.5mm);
   margin-left: 1.5mm;
+}
+
+.dnd-ribbon--inspiration strong {
+  border-radius: 1.5mm;
+  clip-path: polygon(1.5mm 0, calc(100% - 1.5mm) 0, 100% 1.5mm, 100% calc(100% - 1.5mm), calc(100% - 1.5mm) 100%, 1.5mm 100%, 0 calc(100% - 1.5mm), 0 1.5mm);
 }
 
 .dnd-saving-throws {
@@ -385,8 +399,8 @@
 .dnd-saving-throws p,
 .dnd-skills p {
   display: grid;
-  grid-template-columns: 3mm 7mm 1fr;
-  gap: 1.3mm;
+  grid-template-columns: 2.6mm 5.4mm 1fr;
+  gap: 0.8mm;
   align-items: center;
   min-width: 0;
   height: 4.25mm;
@@ -426,11 +440,11 @@
 .dnd-saving-throws span,
 .dnd-skills span {
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
   font-family: Arial, sans-serif;
-  font-size: 7.2pt;
+  font-size: 6.5pt;
+  letter-spacing: -0.015em;
   white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .dnd-skills {
@@ -445,7 +459,7 @@
 
 .dnd-skills small {
   color: #999;
-  font-size: 6.3pt;
+  font-size: 5.8pt;
 }
 
 .dnd-group {
@@ -626,6 +640,11 @@
   border-radius: 50%;
 }
 
+.dnd-death-saves i.is-filled {
+  background: var(--dnd-ink);
+  box-shadow: inset 0 0 0 0.6mm #fff;
+}
+
 .dnd-death-saves b {
   position: absolute;
   right: 0;
@@ -706,12 +725,12 @@
 
 .dnd-equipment-list {
   height: 100%;
-  margin-left: 14mm;
+  margin-left: 19mm;
   overflow: hidden;
-  columns: 2;
-  column-gap: 3mm;
+  columns: 1;
   font-family: Arial, sans-serif;
-  font-size: 6.6pt;
+  font-size: 6.2pt;
+  line-height: 1.15;
 }
 
 .dnd-equipment-list p {
@@ -784,8 +803,10 @@
   font-size: 18pt;
 }
 
-.dnd-brand--compact .dnd-brand__dragon {
-  font-size: 28pt;
+.dnd-brand--compact .dnd-brand__crest {
+  width: 18mm;
+  height: 13mm;
+  flex-basis: 18mm;
 }
 
 .dnd-banner--details {
@@ -1134,24 +1155,51 @@
 /* Naturally paginated appendices preserve every value that may be summarized
    in a fixed-size classic record box. */
 .classic-continuation {
+  position: relative;
   width: 215.9mm;
   min-height: 279.4mm;
-  padding: 11mm 12mm;
+  padding: 9mm 10mm 8mm;
   break-before: page;
   background: #fff;
   color: var(--dnd-ink);
   font-family: Arial, sans-serif;
-  font-size: 8.5pt;
-  line-height: 1.4;
+  font-size: 8pt;
+  line-height: 1.32;
+}
+
+.classic-continuation::before {
+  position: absolute;
+  top: 5.5mm;
+  right: 7mm;
+  left: 7mm;
+  height: 25mm;
+  background: var(--dnd-gray);
+  clip-path: polygon(0 28%, 12% 4%, 25% 17%, 39% 2%, 54% 15%, 68% 3%, 83% 18%, 100% 7%, 97% 45%, 100% 76%, 87% 95%, 70% 84%, 53% 100%, 35% 85%, 18% 98%, 2% 80%);
+  content: "";
 }
 
 .classic-continuation__header {
+  z-index: 1;
+  position: relative;
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: end;
-  margin-bottom: 5mm;
-  padding-bottom: 3mm;
-  border-bottom: 1mm solid var(--dnd-ink);
+  margin-bottom: 4mm;
+  min-height: 25mm;
+  padding: 4.5mm 5mm 3.5mm;
+  border: 0.55mm solid var(--dnd-ink);
+  background: #fff;
+  filter: drop-shadow(0.9mm 1mm 0 var(--dnd-gray));
+  clip-path: polygon(2mm 0, calc(100% - 2mm) 0, 100% 2mm, 100% calc(100% - 2mm), calc(100% - 2mm) 100%, 2mm 100%, 0 calc(100% - 2mm), 0 2mm);
+}
+
+.classic-continuation__header::before {
+  position: absolute;
+  inset: 1mm;
+  border: 0.2mm solid var(--dnd-ink);
+  content: "";
+  pointer-events: none;
+  clip-path: inherit;
 }
 
 .classic-continuation__header p {
@@ -1164,7 +1212,7 @@
 }
 
 .classic-continuation__header h2 {
-  font: 700 19pt/1 Georgia, "Times New Roman", serif;
+  font: 700 18pt/1 Georgia, "Times New Roman", serif;
 }
 
 .classic-continuation__header > strong {
@@ -1173,18 +1221,20 @@
 }
 
 .classic-reference-section {
-  margin-bottom: 5mm;
+  margin-bottom: 4mm;
   break-inside: auto;
 }
 
 .classic-reference-section > h3 {
   margin-bottom: 2mm;
-  padding: 1.4mm 2mm;
-  color: #fff;
-  background: var(--dnd-ink);
+  padding: 1.6mm 3mm;
+  border: 0.45mm solid var(--dnd-ink);
+  color: var(--dnd-ink);
+  background: linear-gradient(90deg, var(--dnd-gray), #fff 82%);
   font-size: 8pt;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  clip-path: polygon(1.5mm 0, calc(100% - 1.5mm) 0, 100% 50%, calc(100% - 1.5mm) 100%, 1.5mm 100%, 0 50%);
 }
 
 .classic-reference-section > p {
@@ -1199,14 +1249,17 @@
 }
 
 .classic-note-grid {
-  margin-bottom: 5mm;
+  margin-bottom: 4mm;
 }
 
 .classic-note-grid article {
-  min-height: 28mm;
+  min-height: 25mm;
   break-inside: avoid-page;
-  border: 0.35mm solid var(--dnd-line);
-  padding: 3mm;
+  border: 0.45mm solid var(--dnd-ink);
+  padding: 2.5mm;
+  background: #fff;
+  box-shadow: 1mm 1mm 0 var(--dnd-gray);
+  clip-path: polygon(1.5mm 0, calc(100% - 1.5mm) 0, 100% 1.5mm, 100% calc(100% - 1.5mm), calc(100% - 1.5mm) 100%, 1.5mm 100%, 0 calc(100% - 1.5mm), 0 1.5mm);
 }
 
 .classic-note-grid h3 {
@@ -1235,7 +1288,7 @@
 
 .classic-table th {
   color: #fff;
-  background: #555;
+  background: var(--dnd-charcoal);
   font-size: 6.5pt;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1253,11 +1306,14 @@
 .classic-entry {
   display: inline-block;
   width: 100%;
-  margin: 0 0 4mm;
+  margin: 0 0 2.5mm;
   break-inside: avoid-page;
-  border: 0.35mm solid var(--dnd-line);
-  border-top: 1mm solid #555;
-  padding: 3mm;
+  border: 0.4mm solid var(--dnd-line);
+  border-top: 0.8mm double var(--dnd-charcoal);
+  padding: 2.2mm;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  box-shadow: 0.8mm 0.8mm 0 #eee;
 }
 
 .classic-entry > header {
@@ -1265,25 +1321,25 @@
   gap: 2mm;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 2mm;
-  padding-bottom: 1mm;
+  margin-bottom: 1.4mm;
+  padding-bottom: 0.8mm;
   break-after: avoid-page;
   border-bottom: 0.2mm solid var(--dnd-line);
 }
 
 .classic-entry > header h3,
 .classic-entry > header h4 {
-  font: 700 11pt/1.15 Georgia, "Times New Roman", serif;
+  font: 700 10pt/1.12 Georgia, "Times New Roman", serif;
 }
 
 .classic-entry > header p {
   color: #666;
-  font-size: 6.5pt;
+  font-size: 6pt;
   text-align: right;
 }
 
 .classic-muted {
-  margin-bottom: 1.2mm !important;
+  margin-bottom: 0.9mm !important;
   color: #666;
   font-size: 7pt;
 }
@@ -1307,7 +1363,7 @@
 .classic-rich-text ul,
 .classic-rich-text ol,
 .classic-rich-text table {
-  margin-bottom: 1.5mm;
+  margin-bottom: 1mm;
 }
 
 .classic-rich-text img {
@@ -1412,12 +1468,12 @@
   }
 
   .classic-entry-list {
-    columns: 1;
+    columns: 2;
   }
 
   .classic-entry {
     display: block;
-    break-inside: auto;
+    break-inside: avoid-column;
   }
 
   .classic-entry > header,

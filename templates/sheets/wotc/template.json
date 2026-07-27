@@ -3,7 +3,7 @@
   "name": "CHARACTER-EXPORTER.Template.Classic.Name",
   "description": "CHARACTER-EXPORTER.Template.Classic.Description",
   "author": "Character Sheet Exporter Contributors",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 1,
   "renderer": "html",
   "template": "sheet.hbs",

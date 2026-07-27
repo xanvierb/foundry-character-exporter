@@ -2,7 +2,12 @@
   <section class="dnd-page dnd-page--character">
     <header class="dnd-header">
       <div class="dnd-brand" aria-hidden="true">
-        <span class="dnd-brand__dragon">◆</span>
+        <svg class="dnd-brand__crest" viewBox="0 0 100 72" focusable="false">
+          <path d="M50 4 78 14v20c0 16-10 27-28 34C32 61 22 50 22 34V14Z"></path>
+          <path d="M50 13 68 20v13c0 11-6 19-18 25-12-6-18-14-18-25V20Z"></path>
+          <path d="M50 16v39M36 25h28M39 44h22"></path>
+          <path d="M21 24 6 17l10 13L4 35l17 1M79 24l15-7-10 13 12 5-17 1"></path>
+        </svg>
         <span class="dnd-brand__words">CLASSIC <i>•</i> RECORD</span>
       </div>
 
@@ -128,8 +133,8 @@
             <h2 class="dnd-box-label">HIT DICE</h2>
           </div>
           <div class="ornate-box dnd-death-saves">
-            <p><span>SUCCESSES</span><i></i><i></i><i></i><b>{{combat.deathSaves.successes}}</b></p>
-            <p><span>FAILURES</span><i></i><i></i><i></i><b>{{combat.deathSaves.failures}}</b></p>
+            <p><span>SUCCESSES</span><i class="{{#if (characterExporterAtLeast combat.deathSaves.successes 1)}}is-filled{{/if}}"></i><i class="{{#if (characterExporterAtLeast combat.deathSaves.successes 2)}}is-filled{{/if}}"></i><i class="{{#if (characterExporterAtLeast combat.deathSaves.successes 3)}}is-filled{{/if}}"></i></p>
+            <p><span>FAILURES</span><i class="{{#if (characterExporterAtLeast combat.deathSaves.failures 1)}}is-filled{{/if}}"></i><i class="{{#if (characterExporterAtLeast combat.deathSaves.failures 2)}}is-filled{{/if}}"></i><i class="{{#if (characterExporterAtLeast combat.deathSaves.failures 3)}}is-filled{{/if}}"></i></p>
             <h2 class="dnd-box-label">DEATH SAVES</h2>
           </div>
         </section>
@@ -189,7 +194,12 @@
   <section class="dnd-page dnd-page--details">
     <header class="dnd-header dnd-header--details">
       <div class="dnd-brand dnd-brand--compact" aria-hidden="true">
-        <span class="dnd-brand__dragon">◆</span>
+        <svg class="dnd-brand__crest" viewBox="0 0 100 72" focusable="false">
+          <path d="M50 4 78 14v20c0 16-10 27-28 34C32 61 22 50 22 34V14Z"></path>
+          <path d="M50 13 68 20v13c0 11-6 19-18 25-12-6-18-14-18-25V20Z"></path>
+          <path d="M50 16v39M36 25h28M39 44h22"></path>
+          <path d="M21 24 6 17l10 13L4 35l17 1M79 24l15-7-10 13 12 5-17 1"></path>
+        </svg>
         <span class="dnd-brand__words">CLASSIC</span>
       </div>
 
@@ -260,7 +270,12 @@
     <section class="dnd-page dnd-page--spells">
       <header class="dnd-header dnd-header--spells">
         <div class="dnd-brand dnd-brand--compact" aria-hidden="true">
-          <span class="dnd-brand__dragon">◆</span>
+          <svg class="dnd-brand__crest" viewBox="0 0 100 72" focusable="false">
+            <path d="M50 4 78 14v20c0 16-10 27-28 34C32 61 22 50 22 34V14Z"></path>
+            <path d="M50 13 68 20v13c0 11-6 19-18 25-12-6-18-14-18-25V20Z"></path>
+            <path d="M50 16v39M36 25h28M39 44h22"></path>
+            <path d="M21 24 6 17l10 13L4 35l17 1M79 24l15-7-10 13 12 5-17 1"></path>
+          </svg>
           <span class="dnd-brand__words">CLASSIC</span>
         </div>
 
@@ -423,6 +438,7 @@
     <div class="classic-reference-grid">
       <section class="classic-reference-section">
         <h3>Proficiencies &amp; senses</h3>
+        {{#if character.classes.length}}<p><strong>Classes:</strong> {{#each character.classes}}{{name}} {{level}}{{#if subclass}} ({{subclass}}){{/if}}{{#unless @last}}, {{/unless}}{{/each}}</p>{{/if}}
         {{#if proficiencies.armor.length}}<p><strong>Armor:</strong> {{characterExporterJoin proficiencies.armor}}</p>{{/if}}
         {{#if proficiencies.weapons.length}}<p><strong>Weapons:</strong> {{characterExporterJoin proficiencies.weapons}}</p>{{/if}}
         {{#if proficiencies.tools.length}}<p><strong>Tools:</strong> {{characterExporterJoin proficiencies.tools}}</p>{{/if}}

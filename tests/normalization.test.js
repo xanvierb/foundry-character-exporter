@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   finiteNumber,
   proficiencyLabel,
+  roundedNumber,
   signedNumber,
   splitList,
   toArray,
@@ -28,6 +29,12 @@ test("signed number and proficiency labels are template-friendly", () => {
   assert.equal(proficiencyLabel(0.5), "half");
   assert.equal(proficiencyLabel(1), "proficient");
   assert.equal(proficiencyLabel(2), "expertise");
+});
+
+test("rounded numbers are stable for template display", () => {
+  assert.equal(roundedNumber(0.15000000000000002), 0.15);
+  assert.equal(roundedNumber("12.345678", 0, 3), 12.346);
+  assert.equal(roundedNumber("not-a-number", 2), 2);
 });
 
 test("toPlainValue removes functions and circular references", () => {

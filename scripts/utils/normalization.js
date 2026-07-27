@@ -28,6 +28,17 @@ export function optionalNumber(value) {
   return Number.isFinite(number) ? number : null;
 }
 
+/**
+ * Normalize display-facing decimal values without leaking binary floating-point
+ * artifacts such as 0.15000000000000002 into CharacterExportData.
+ */
+export function roundedNumber(value, fallback = 0, precision = 4) {
+  const number = finiteNumber(value, fallback);
+  const safePrecision = Math.min(Math.max(integer(precision), 0), 8);
+  const factor = 10 ** safePrecision;
+  return Math.round((number + Number.EPSILON) * factor) / factor;
+}
+
 export function integer(value, fallback = 0) {
   return Math.trunc(finiteNumber(value, fallback));
 }

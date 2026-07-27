@@ -39,7 +39,7 @@ Allow pop-ups for the Foundry origin if the browser blocks the print view. Expor
 Two original templates are bundled:
 
 - **Wayfarer Character Folio** is an A4 design with a compact play overview and naturally paginated details.
-- **Classic Character Record** is a traditional Letter-size three-page summary followed by complete, naturally paginated equipment, feature, narrative, and spell appendices.
+- **Classic Character Record** is a traditional Letter-size two-page summary, with a matching third spell page for spellcasters, followed by complete, naturally paginated equipment, feature, narrative, and spell appendices.
 
 Both work in color and grayscale and preserve long character content rather than silently truncating it.
 
@@ -161,12 +161,13 @@ The built-in metadata file demonstrates the on-disk format:
 
 Relative `template` and `stylesheet` values are a convenience used by the bundled metadata loader. Third-party calls to `registerTemplate` use full `modules/...` or `systems/...` paths. `stylesheets` may be used instead of `stylesheet` to load more than one CSS file.
 
-Foundry's existing Handlebars environment is used. The module registers four namespaced helpers:
+Foundry's existing Handlebars environment is used. The module registers five namespaced helpers:
 
 - `characterExporterSigned value` — formats `3` as `+3`.
 - `characterExporterJoin values` — joins strings or objects with a `name` property.
 - `characterExporterHas value` — tests whether a collection-like normalized value is non-empty.
 - `characterExporterEqual left right` — compares values for level/group filtering without relying on an unnamespaced Foundry helper.
+- `characterExporterAtLeast value minimum` — checks threshold-based marks such as filled death-save circles.
 
 Business rules belong in an adapter, not a template. A template's root context is exactly CharacterExportData.
 

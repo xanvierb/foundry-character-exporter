@@ -17,4 +17,5 @@ export function registerHandlebarsHelpers() {
     return Boolean(value && (typeof value !== "object" || Object.keys(value).length));
   });
   handlebars.registerHelper("characterExporterEqual", (left, right) => String(left) === String(right));
+  handlebars.registerHelper("characterExporterAtLeast", (value, minimum) => Number(value) >= Number(minimum));
 }

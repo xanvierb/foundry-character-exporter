@@ -97,7 +97,7 @@ The print view supplies its own Print/Close toolbar and removes it under `@media
 
 The declared `page.size` (`A4` or `Letter`) and `page.orientation` also size the standalone on-screen preview. The template stylesheet remains responsible for its matching `@page` rule.
 
-Available namespaced helpers are `characterExporterSigned`, `characterExporterJoin`, `characterExporterHas`, and `characterExporterEqual`. Prefer these over unnamespaced helpers whose availability can vary with the Foundry environment.
+Available namespaced helpers are `characterExporterSigned`, `characterExporterJoin`, `characterExporterHas`, `characterExporterEqual`, and `characterExporterAtLeast`. Prefer these over unnamespaced helpers whose availability can vary with the Foundry environment.
 
 ## Paths and assets
 

@@ -22,6 +22,7 @@ test("every bundled template resolves its own assets and satisfies registry vali
   assert.match(definitions[1].template, /templates\/sheets\/wotc\/sheet\.hbs$/u);
   assert.match(definitions[1].stylesheets[0], /templates\/sheets\/wotc\/sheet\.css$/u);
   assert.equal(definitions[1].page.size, "Letter");
+  assert.equal(definitions[1].version, "1.1.0");
 });
 
 test("bundled metadata loader reports missing assets and resolves successful responses", async () => {

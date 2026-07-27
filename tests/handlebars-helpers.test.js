@@ -28,4 +28,9 @@ test("join helper ignores Handlebars' implicit options argument", t => {
   assert.equal(equal(3, 3), true);
   assert.equal(equal(3, "3"), true);
   assert.equal(equal(3, 4), false);
+
+  const atLeast = helpers.get("characterExporterAtLeast");
+  assert.equal(atLeast(2, 1), true);
+  assert.equal(atLeast("2", 2), true);
+  assert.equal(atLeast(1, 2), false);
 });

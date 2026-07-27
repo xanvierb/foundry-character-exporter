@@ -181,7 +181,7 @@ Physical owned Items (`weapon`, `equipment`, `consumable`, `tool`, `loot`, `cont
 }
 ```
 
-Contained Items remain in the array; their `container` link prevents information loss.
+Contained Items remain in the array; their `container` link prevents information loss. Quantity, weight, and price values remain numeric and are normalized to at most four decimal places so templates never receive binary floating-point display artifacts.
 
 ### `features`
 
