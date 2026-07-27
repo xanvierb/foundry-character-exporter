@@ -3,7 +3,7 @@
   "type": "module",
   "title": "Character Sheet Exporter",
   "description": "Export D&D 5e player characters to clean, printable HTML character sheets using pluggable templates.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "compatibility": {
     "minimum": "13",
     "verified": "14"
@@ -42,7 +42,7 @@
     ]
   },
   "manifest": "https://raw.githubusercontent.com/xanvierb/foundry-character-exporter/refs/heads/main/module.json",
-  "download": "https://github.com/xanvierb/foundry-character-exporter/archive/refs/tags/0.0.2.zip",
+  "download": "https://github.com/xanvierb/foundry-character-exporter/archive/refs/tags/0.0.3.zip",
   "license": "LICENSE",
   "readme": "README.md"
 }

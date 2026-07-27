@@ -112,22 +112,42 @@ export function cleanRichText(raw) {
   if (globalThis.document?.createElement) {
     const template = globalThis.document.createElement("template");
     template.innerHTML = cleaned;
-    template.content.querySelectorAll("script, style, iframe, object, embed, link, meta, base, form, input, button")
+    template.content.querySelectorAll([
+      "script", "style", "iframe", "object", "embed", "link", "meta", "base", "form", "input", "button",
+      ".secret", "[data-visibility='gm']"
+    ].join(", "))
       .forEach(node => node.remove());
     template.content.querySelectorAll("*").forEach(element => {
       for (const attribute of [...element.attributes]) {
-        if (/^on/iu.test(attribute.name)) element.removeAttribute(attribute.name);
-        if (["href", "src", "xlink:href"].includes(attribute.name.toLowerCase())
+        const name = attribute.name.toLowerCase();
+        // Actor descriptions are authored inside Foundry's themed editor. The
+        // printable template owns presentation, so inline editor/theme styles
+        // must not leak into the standalone page.
+        if (name === "style" || /^on/iu.test(name)) element.removeAttribute(attribute.name);
+        if (["href", "src", "xlink:href"].includes(name)
           && /^\s*javascript:/iu.test(attribute.value)) element.removeAttribute(attribute.name);
       }
     });
-    return template.innerHTML;
+    return normalizeFoundryRichText(template.innerHTML);
   }
 
-  return cleaned
+  const safe = cleaned
+    .replace(/<([a-z][\w:-]*)\b(?=[^>]*\bclass\s*=\s*(?:"[^"]*\bsecret\b[^"]*"|'[^']*\bsecret\b[^']*'))[^>]*>[\s\S]*?<\/\1\s*>/giu, "")
     .replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/giu, "")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style\s*>/giu, "")
+    .replace(/\sstyle\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/giu, "")
     .replace(/\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/giu, "")
     .replace(/(?:href|src)\s*=\s*(["'])\s*javascript:[\s\S]*?\1/giu, "");
+
+  return normalizeFoundryRichText(safe);
+}
+
+/** Convert Foundry document references to useful static print text. */
+function normalizeFoundryRichText(html) {
+  return html
+    .replace(/@UUID\[[^\]]+\](?:\{([^}]*)\})?/giu, (_match, label) => label ?? "")
+    .replace(/(?:&amp;|&)Reference\[([^\]]+)\](?:\{([^}]*)\})?/giu,
+      (_match, reference, label) => label || reference);
 }
 
 export function modulePath(relativePath) {

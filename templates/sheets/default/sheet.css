@@ -384,6 +384,14 @@
   break-inside: avoid-page;
 }
 
+.ce-table td > :first-child {
+  margin-top: 0;
+}
+
+.ce-table td > :last-child {
+  margin-bottom: 0;
+}
+
 .ce-table--inventory th:nth-child(n + 2),
 .ce-table--inventory td:nth-child(n + 2) {
   width: 18mm;
@@ -454,7 +462,19 @@
 }
 
 .ce-rich-text {
+  color: inherit;
+  background: transparent;
   overflow-wrap: anywhere;
+  orphans: 3;
+  widows: 3;
+}
+
+/* External adapters still receive a neutral printable presentation if their
+   normalized rich text contains editor styles. The built-in adapter strips
+   these attributes before they enter CharacterExportData. */
+.ce-rich-text [style] {
+  color: inherit !important;
+  background: transparent !important;
 }
 
 .ce-rich-text > :last-child {
@@ -470,6 +490,25 @@
 .ce-rich-text img {
   max-width: 100%;
   height: auto;
+}
+
+.ce-rich-text table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: inherit;
+}
+
+.ce-rich-text th,
+.ce-rich-text td {
+  padding: 1mm;
+  border: 0.2mm solid var(--ce-line);
+  vertical-align: top;
+}
+
+.ce-rich-text pre,
+.ce-rich-text code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .ce-spell-summary {
@@ -589,11 +628,39 @@
   }
 
   .ce-panel,
-  .ce-entry,
   .ce-note-grid article,
   .ce-note-wide,
   .ce-table tr {
     break-inside: avoid-page;
+  }
+
+  /* A feature, spell, or item description may be taller than one page. Keep
+     ordinary cards together when possible while allowing oversized content to
+     fragment instead of overflowing or being displaced by an atomic inline box. */
+  .ce-entry-list {
+    columns: 1;
+  }
+
+  .ce-entry {
+    display: block;
+    break-inside: auto;
+  }
+
+  .ce-table--inventory tr {
+    break-inside: auto;
+  }
+
+  .ce-entry header,
+  .ce-entry h1,
+  .ce-entry h2,
+  .ce-entry h3,
+  .ce-rich-text h1,
+  .ce-rich-text h2,
+  .ce-rich-text h3,
+  .ce-rich-text h4,
+  .ce-rich-text h5,
+  .ce-rich-text h6 {
+    break-after: avoid-page;
   }
 
   a {

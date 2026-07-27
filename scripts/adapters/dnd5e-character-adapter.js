@@ -137,7 +137,7 @@ function normalizeAttack(item, activity) {
   const type = attack.type ?? {};
   return {
     id: `${text(item.id)}.${text(activity.id ?? activity._id)}`,
-    name: text(activity.name, item.name),
+    name: activityDisplayName(item, activity),
     image: text(activity.img, item.img),
     kind: text(type.classification, item.type),
     attackType: text(type.value),
@@ -163,9 +163,39 @@ function resolveLocalItem(actor, value, type) {
   return toArray(actor.items).find(item => item.type === type) ?? null;
 }
 
-function normalizeTraitValues(trait, configuration) {
-  const values = toArray(trait?.value).map(id => configLabel(configuration, id, text(id)));
+function traitValueLabel(id, configuration, traitType) {
+  try {
+    const label = globalThis.game?.dnd5e?.documents?.Trait?.keyLabel?.(text(id), { trait: traitType });
+    if (typeof label === "string" && label && label !== id) return text(label);
+  } catch {
+    // Fall back to the already-localized CONFIG mapping below.
+  }
+
+  const findEntry = entries => {
+    if (!entries || typeof entries !== "object") return undefined;
+    if (Object.hasOwn(entries, id)) return entries[id];
+    for (const entry of Object.values(entries)) {
+      const nested = entry && typeof entry === "object" ? findEntry(entry.children) : undefined;
+      if (nested !== undefined) return nested;
+    }
+    return undefined;
+  };
+  return localizeConfigEntry(findEntry(configuration), text(id));
+}
+
+function normalizeTraitValues(trait, configuration, traitType) {
+  const values = toArray(trait?.value).map(id => traitValueLabel(id, configuration, traitType));
   return uniqueStrings([...values, ...splitList(trait?.custom)]);
+}
+
+function activityDisplayName(item, activity) {
+  const preparedName = text(activity?.name);
+  const titleKey = text(activity?.metadata?.title,
+    activity?.type === "attack" ? "DND5E.ATTACK.Title.one" : "");
+  const defaultName = titleKey ? localize(titleKey, "") : "";
+  return !preparedName || (defaultName && preparedName === defaultName)
+    ? text(item?.name, preparedName)
+    : preparedName;
 }
 
 function normalizeClasses(actor) {
@@ -559,30 +589,34 @@ export class Dnd5eCharacterAdapter extends CharacterAdapter {
       skills: normalizeSkills(effective),
       senses: normalizeSenses(attributes),
       proficiencies: {
-        armor: normalizeTraitValues(traits.armorProf, config.armorProficiencies),
-        weapons: normalizeTraitValues(traits.weaponProf, config.weaponProficiencies),
+        armor: normalizeTraitValues(traits.armorProf, config.armorProficiencies, "armor"),
+        weapons: normalizeTraitValues(traits.weaponProf, config.weaponProficiencies, "weapon"),
         tools: Object.entries(effective.tools ?? {}).map(([id, tool]) => {
           const proficiency = finiteNumber(tool.prof?.multiplier ?? tool.value);
           return {
             id,
-            name: configLabel(config.tools ?? config.toolProficiencies, id, id),
+            name: traitValueLabel(id, config.toolProficiencies ?? config.tools, "tool"),
             ability: text(tool.ability),
             modifier: integer(tool.total, finiteNumber(tool.mod) + finiteNumber(tool.bonus)),
             proficiency,
             proficiencyLabel: proficiencyLabel(proficiency)
           };
         }).sort((a, b) => a.name.localeCompare(b.name)),
-        languages: uniqueStrings([
-          ...toArray(traits.languages?.labels?.languages),
-          ...normalizeTraitValues(traits.languages, config.languages)
-        ]),
+        // dnd5e prepares nested language categories into localized labels. Use
+        // those as the canonical display list; combining them with raw ids
+        // duplicates every language on 5.1.x and 5.3.x Actors.
+        languages: toArray(traits.languages?.labels?.languages).length
+          ? uniqueStrings(toArray(traits.languages.labels.languages))
+          : normalizeTraitValues(traits.languages, config.languages, "languages"),
         communication: toArray(traits.languages?.labels?.ranged).map(value => text(value)).filter(Boolean)
       },
       defenses: {
-        damageResistances: normalizeTraitValues(traits.dr, config.damageTypes),
-        damageImmunities: normalizeTraitValues(traits.di, config.damageTypes),
-        damageVulnerabilities: normalizeTraitValues(traits.dv, config.damageTypes),
-        conditionImmunities: normalizeTraitValues(traits.ci, config.conditionTypes ?? config.conditionEffects)
+        damageResistances: normalizeTraitValues(traits.dr, config.damageTypes, "dr"),
+        damageImmunities: normalizeTraitValues(traits.di, config.damageTypes, "di"),
+        damageVulnerabilities: normalizeTraitValues(traits.dv, config.damageTypes, "dv"),
+        conditionImmunities: normalizeTraitValues(
+          traits.ci, config.conditionTypes ?? config.conditionEffects, "ci"
+        )
       },
       attacks: sortByName(attacks),
       inventory: normalizeInventory(actor),

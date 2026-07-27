@@ -99,7 +99,9 @@ function makeActor() {
   const attackActivity = {
     id: "attack-longsword",
     type: "attack",
-    name: "Longsword",
+    // dnd5e prepares an unnamed activity with the localized activity type.
+    name: "Attack",
+    metadata: { title: "DND5E.ATTACK.Title.one" },
     ability: "str",
     attack: { type: { classification: "weapon", value: "melee" } },
     activation: { type: "action", value: 1 },
@@ -213,7 +215,7 @@ function makeActor() {
     traits: {
       size: "med",
       armorProf: { value: new Set(["hvy"]), custom: "" },
-      weaponProf: { value: new Set(["mar"]), custom: "" },
+      weaponProf: { value: new Set(["mar", "dagger"]), custom: "" },
       languages: { value: new Set(["common", "celestial"]), custom: "", labels: {
         languages: ["Common", "Celestial"], ranged: []
       } },
@@ -263,7 +265,16 @@ test("dnd5e 5.1.9 and 5.3 adapter creates normalized multiclass CharacterExportD
     system: { id: "dnd5e", version: "5.3.3" },
     settings: { get: () => "modern" },
     users: [{ name: "Player One", character: { id: "actor-ada" } }],
-    i18n: { localize: value => value }
+    i18n: {
+      localize: value => value === "DND5E.ATTACK.Title.one" ? "Attack" : value
+    },
+    dnd5e: {
+      documents: {
+        Trait: {
+          keyLabel: (id, { trait }) => trait === "weapon" && id === "dagger" ? "Dagger" : id
+        }
+      }
+    }
   };
   globalThis.CONFIG = {
     DND5E: {
@@ -312,6 +323,7 @@ test("dnd5e 5.1.9 and 5.3 adapter creates normalized multiclass CharacterExportD
   assert.equal(data.combat.armorClass, 18);
   assert.equal(data.combat.speed.distance, 30);
   assert.equal(data.senses[0].distance, 60);
+  assert.equal(data.attacks[0].name, "Longsword");
   assert.equal(data.attacks[0].attackBonus, 6);
   assert.equal(data.attacks[0].damage[0].formula, "1d8 + 3");
   assert.equal(data.inventory[0].name, "Longsword");
@@ -323,6 +335,8 @@ test("dnd5e 5.1.9 and 5.3 adapter creates normalized multiclass CharacterExportD
   assert.deepEqual(data.spells[0].components.map(component => component.name), [
     "Verbal", "Somatic", "Material", "Concentration"
   ]);
+  assert.deepEqual(data.proficiencies.weapons, ["Martial Weapons", "Dagger"]);
+  assert.deepEqual(data.proficiencies.languages, ["Common", "Celestial"]);
   assert.equal(data.extensions.dnd5e.rulesVersion, "2024");
   assert.doesNotThrow(() => JSON.stringify(data));
   assert.equal(JSON.stringify(data).includes('"system"'), true, "source.system is an intentional semantic field");
