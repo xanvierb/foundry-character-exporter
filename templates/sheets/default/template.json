@@ -1,0 +1,15 @@
+{
+  "id": "default",
+  "name": "CHARACTER-EXPORTER.Template.Default.Name",
+  "description": "CHARACTER-EXPORTER.Template.Default.Description",
+  "author": "Character Sheet Exporter Contributors",
+  "version": "1.0.0",
+  "schemaVersion": 1,
+  "renderer": "html",
+  "template": "sheet.hbs",
+  "stylesheet": "sheet.css",
+  "page": {
+    "size": "A4",
+    "orientation": "portrait"
+  }
+}

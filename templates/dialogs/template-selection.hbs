@@ -1,0 +1,18 @@
+<div class="character-exporter-template-picker">
+  <p>{{localize "CHARACTER-EXPORTER.Dialog.Intro" name=actorName}}</p>
+  <fieldset class="character-exporter-template-list">
+    <legend class="sr-only">{{localize "CHARACTER-EXPORTER.Dialog.TemplateLegend"}}</legend>
+    {{#each templates}}
+      <label class="character-exporter-template-option">
+        <input type="radio" name="templateId" value="{{id}}" {{#if @first}}checked{{/if}}>
+        <span class="character-exporter-template-name">{{name}}</span>
+        {{#if description}}<span class="character-exporter-template-description">{{description}}</span>{{/if}}
+        <span class="character-exporter-template-meta">
+          {{localize "CHARACTER-EXPORTER.Dialog.Version" version=version}}
+          · {{localize "CHARACTER-EXPORTER.Dialog.Schema" version=schemaVersion}}
+          {{#if author}} · {{localize "CHARACTER-EXPORTER.Dialog.ByAuthor" author=author}}{{/if}}
+        </span>
+      </label>
+    {{/each}}
+  </fieldset>
+</div>

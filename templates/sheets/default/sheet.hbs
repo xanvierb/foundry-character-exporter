@@ -1,0 +1,217 @@
+<article class="ce-sheet">
+  <header class="ce-hero">
+    <div class="ce-identity">
+      {{#if character.portrait}}
+        <img class="ce-portrait" src="{{character.portrait}}" alt="">
+      {{else}}
+        <div class="ce-portrait ce-portrait--empty" aria-hidden="true">✦</div>
+      {{/if}}
+      <div class="ce-name-block">
+        <p class="ce-kicker">{{localize "CHARACTER-EXPORTER.Sheet.Level"}} {{character.level}}</p>
+        <h1>{{character.name}}</h1>
+        <p class="ce-class-line">
+          {{#each character.classes}}
+            <span>{{name}} {{level}}{{#if subclass}} · {{subclass}}{{/if}}</span>
+          {{/each}}
+        </p>
+      </div>
+    </div>
+    <dl class="ce-facts">
+      {{#if character.playerName}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Player"}}</dt><dd>{{character.playerName}}</dd></div>{{/if}}
+      {{#if character.species.name}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Species"}}</dt><dd>{{character.species.name}}</dd></div>{{/if}}
+      {{#if character.background.name}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Background"}}</dt><dd>{{character.background.name}}</dd></div>{{/if}}
+      {{#if character.alignment}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Alignment"}}</dt><dd>{{character.alignment}}</dd></div>{{/if}}
+    </dl>
+  </header>
+
+  <section class="ce-vitals" aria-label="{{localize "CHARACTER-EXPORTER.Sheet.Combat"}}">
+    <div class="ce-vital"><span>{{combat.armorClass}}</span><small>{{localize "CHARACTER-EXPORTER.Sheet.ArmorClass"}}</small></div>
+    <div class="ce-vital"><span>{{characterExporterSigned combat.initiative}}</span><small>{{localize "CHARACTER-EXPORTER.Sheet.Initiative"}}</small></div>
+    <div class="ce-vital"><span>{{characterExporterSigned character.proficiencyBonus}}</span><small>{{localize "CHARACTER-EXPORTER.Sheet.Proficiency"}}</small></div>
+    <div class="ce-vital"><span>{{combat.passivePerception}}</span><small>{{localize "CHARACTER-EXPORTER.Sheet.Passive"}}</small></div>
+    {{#if combat.speed}}<div class="ce-vital"><span>{{combat.speed.distance}} <sup>{{combat.speed.units}}</sup></span><small>{{localize "CHARACTER-EXPORTER.Sheet.Speed"}}</small></div>{{/if}}
+    <div class="ce-vital ce-vital--hp"><span>{{combat.hp.current}} / {{combat.hp.maximum}}</span><small>{{localize "CHARACTER-EXPORTER.Sheet.HitPoints"}}{{#if combat.hp.temporary}} · {{combat.hp.temporary}} {{localize "CHARACTER-EXPORTER.Sheet.Temporary"}}{{/if}}</small></div>
+    <div class="ce-vital {{#if character.inspiration}}ce-vital--active{{/if}}"><span>{{#if character.inspiration}}●{{else}}○{{/if}}</span><small>{{localize "CHARACTER-EXPORTER.Sheet.Inspiration"}}</small></div>
+  </section>
+
+  <div class="ce-overview-grid">
+    <div class="ce-column">
+      <section class="ce-panel ce-abilities">
+        <h2>{{localize "CHARACTER-EXPORTER.Sheet.Abilities"}}</h2>
+        <div class="ce-ability-grid">
+          {{#each abilities}}
+            <article class="ce-ability">
+              <h3>{{abbreviation}}</h3>
+              <strong>{{characterExporterSigned modifier}}</strong>
+              <span class="ce-score">{{score}}</span>
+              <span class="ce-save {{#if proficient}}ce-save--proficient{{/if}}" title="{{localize "CHARACTER-EXPORTER.Sheet.SavingThrow"}}">
+                {{characterExporterSigned save}}
+              </span>
+            </article>
+          {{/each}}
+        </div>
+      </section>
+
+      <section class="ce-panel">
+        <h2>{{localize "CHARACTER-EXPORTER.Sheet.Combat"}}</h2>
+        <dl class="ce-lines">
+          <div><dt>{{localize "CHARACTER-EXPORTER.Sheet.DeathSaves"}}</dt><dd>{{combat.deathSaves.successes}} {{localize "CHARACTER-EXPORTER.Sheet.Successes"}} · {{combat.deathSaves.failures}} {{localize "CHARACTER-EXPORTER.Sheet.Failures"}}</dd></div>
+          {{#each combat.hitDice}}<div><dt>{{className}}</dt><dd>{{current}} / {{maximum}} {{denomination}}</dd></div>{{/each}}
+          <div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Exhaustion"}}</dt><dd>{{combat.exhaustion}}</dd></div>
+          <div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Attunement"}}</dt><dd>{{combat.attunement.current}} / {{combat.attunement.maximum}}</dd></div>
+        </dl>
+      </section>
+
+      {{#if resources.length}}
+        <section class="ce-panel">
+          <h2>{{localize "CHARACTER-EXPORTER.Sheet.Resources"}}</h2>
+          <dl class="ce-lines">{{#each resources}}<div><dt>{{name}}</dt><dd>{{current}} / {{maximum}}</dd></div>{{/each}}</dl>
+        </section>
+      {{/if}}
+
+      {{#if currency.denominations.length}}
+        <section class="ce-panel">
+          <h2>{{localize "CHARACTER-EXPORTER.Sheet.Currency"}}</h2>
+          <div class="ce-currency">{{#each currency.denominations}}<span><strong>{{value}}</strong> {{id}}</span>{{/each}}</div>
+        </section>
+      {{/if}}
+    </div>
+
+    <div class="ce-column">
+      <section class="ce-panel ce-skills">
+        <h2>{{localize "CHARACTER-EXPORTER.Sheet.Skills"}}</h2>
+        <div class="ce-skill-grid">
+          {{#each skills}}
+            <div class="ce-skill">
+              <span class="ce-prof ce-prof--{{proficiencyLabel}}" aria-hidden="true"></span>
+              <strong>{{characterExporterSigned modifier}}</strong>
+              <span>{{name}}</span>
+              <small>{{ability}}</small>
+              <em>{{passive}}</em>
+            </div>
+          {{/each}}
+        </div>
+      </section>
+
+      <section class="ce-panel">
+        <h2>{{localize "CHARACTER-EXPORTER.Sheet.Proficiencies"}}</h2>
+        <dl class="ce-lines ce-lines--wrap">
+          {{#if proficiencies.armor.length}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Armor"}}</dt><dd>{{characterExporterJoin proficiencies.armor}}</dd></div>{{/if}}
+          {{#if proficiencies.weapons.length}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Weapons"}}</dt><dd>{{characterExporterJoin proficiencies.weapons}}</dd></div>{{/if}}
+          {{#if proficiencies.tools.length}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Tools"}}</dt><dd>{{characterExporterJoin proficiencies.tools}}</dd></div>{{/if}}
+          {{#if proficiencies.languages.length}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Languages"}}</dt><dd>{{characterExporterJoin proficiencies.languages}}</dd></div>{{/if}}
+          {{#if proficiencies.communication.length}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Communication"}}</dt><dd>{{characterExporterJoin proficiencies.communication}}</dd></div>{{/if}}
+        </dl>
+      </section>
+
+      {{#if senses.length}}
+        <section class="ce-panel">
+          <h2>{{localize "CHARACTER-EXPORTER.Sheet.Senses"}}</h2>
+          <ul class="ce-inline-list">{{#each senses}}<li>{{name}}{{#if distance}} {{distance}} {{units}}{{/if}}{{#if details}} — {{details}}{{/if}}</li>{{/each}}</ul>
+        </section>
+      {{/if}}
+
+      <section class="ce-panel">
+        <h2>{{localize "CHARACTER-EXPORTER.Sheet.Defenses"}}</h2>
+        <dl class="ce-lines ce-lines--wrap">
+          {{#if defenses.damageResistances.length}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Resistances"}}</dt><dd>{{characterExporterJoin defenses.damageResistances}}</dd></div>{{/if}}
+          {{#if defenses.damageImmunities.length}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Immunities"}}</dt><dd>{{characterExporterJoin defenses.damageImmunities}}</dd></div>{{/if}}
+          {{#if defenses.damageVulnerabilities.length}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Vulnerabilities"}}</dt><dd>{{characterExporterJoin defenses.damageVulnerabilities}}</dd></div>{{/if}}
+          {{#if defenses.conditionImmunities.length}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.ConditionImmunities"}}</dt><dd>{{characterExporterJoin defenses.conditionImmunities}}</dd></div>{{/if}}
+        </dl>
+      </section>
+    </div>
+  </div>
+
+  {{#if attacks.length}}
+    <section class="ce-section ce-section--ruled">
+      <h2>{{localize "CHARACTER-EXPORTER.Sheet.Attacks"}}</h2>
+      <table class="ce-table">
+        <thead><tr><th>{{localize "CHARACTER-EXPORTER.Sheet.Attack"}}</th><th>{{localize "CHARACTER-EXPORTER.Sheet.Range"}}</th><th>{{localize "CHARACTER-EXPORTER.Sheet.Damage"}}</th></tr></thead>
+        <tbody>{{#each attacks}}<tr><td><strong>{{name}}</strong>{{#if attackFormula}} <span class="ce-pill">{{attackFormula}}</span>{{/if}}</td><td>{{range.label}}</td><td>{{#each damage}}<span class="ce-damage">{{label}}</span>{{/each}}</td></tr>{{/each}}</tbody>
+      </table>
+    </section>
+  {{/if}}
+
+  {{#if inventory.length}}
+    <section class="ce-section ce-page-break">
+      <h2>{{localize "CHARACTER-EXPORTER.Sheet.Inventory"}}</h2>
+      <table class="ce-table ce-table--inventory">
+        <thead><tr><th>{{localize "CHARACTER-EXPORTER.Sheet.Item"}}</th><th>{{localize "CHARACTER-EXPORTER.Sheet.Quantity"}}</th><th>{{localize "CHARACTER-EXPORTER.Sheet.Weight"}}</th><th>{{localize "CHARACTER-EXPORTER.Sheet.Value"}}</th></tr></thead>
+        <tbody>
+          {{#each inventory}}
+            <tr>
+              <td>
+                <strong>{{name}}</strong>
+                <span class="ce-muted">{{typeName}}{{#if equipped}} · {{localize "CHARACTER-EXPORTER.Sheet.Equipped"}}{{/if}}{{#if attuned}} · {{localize "CHARACTER-EXPORTER.Sheet.Attuned"}}{{/if}}{{#if container}} · {{localize "CHARACTER-EXPORTER.Sheet.In"}} {{container.name}}{{/if}}</span>
+                {{#if description}}<div class="ce-rich-text ce-item-description">{{{description}}}</div>{{/if}}
+              </td>
+              <td>{{quantity}}</td><td>{{weight.total}} {{weight.units}}</td><td>{{price.value}} {{price.denomination}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </section>
+  {{/if}}
+
+  {{#if features.length}}
+    <section class="ce-section ce-page-break">
+      <h2>{{localize "CHARACTER-EXPORTER.Sheet.Features"}}</h2>
+      <div class="ce-entry-list">
+        {{#each features}}
+          <article class="ce-entry">
+            <header><h3>{{name}}</h3><p>{{categoryName}}{{#if requirements}} · {{requirements}}{{/if}}{{#if uses}} · {{uses.current}} / {{uses.maximum}} {{localize "CHARACTER-EXPORTER.Sheet.Uses"}}{{/if}}</p></header>
+            {{#if description}}<div class="ce-rich-text">{{{description}}}</div>{{/if}}
+          </article>
+        {{/each}}
+      </div>
+    </section>
+  {{/if}}
+
+  {{#if spellcasting.ability}}
+    <section class="ce-section ce-page-break">
+      <h2>{{localize "CHARACTER-EXPORTER.Sheet.Spellcasting"}}</h2>
+      <div class="ce-spell-summary">
+        <div><strong>{{spellcasting.abilityName}}</strong><span>{{localize "CHARACTER-EXPORTER.Sheet.SpellAbility"}}</span></div>
+        <div><strong>{{characterExporterSigned spellcasting.attackBonus}}</strong><span>{{localize "CHARACTER-EXPORTER.Sheet.SpellAttack"}}</span></div>
+        <div><strong>{{spellcasting.saveDc}}</strong><span>{{localize "CHARACTER-EXPORTER.Sheet.SaveDC"}}</span></div>
+        {{#each spellcasting.classes}}{{#if preparationMaximum}}<div><strong>{{preparationMaximum}}</strong><span>{{name}} · {{localize "CHARACTER-EXPORTER.Sheet.PreparedMaximum"}}</span></div>{{/if}}{{/each}}
+      </div>
+      {{#if spellcasting.slots.length}}
+        <div class="ce-slots"><h3>{{localize "CHARACTER-EXPORTER.Sheet.SpellSlots"}}</h3>{{#each spellcasting.slots}}<span><strong>{{label}}</strong> {{current}} / {{maximum}}</span>{{/each}}</div>
+      {{/if}}
+
+      {{#if spells.length}}
+        <h3 class="ce-subheading">{{localize "CHARACTER-EXPORTER.Sheet.Spells"}}</h3>
+        <div class="ce-entry-list ce-spell-list">
+          {{#each spells}}
+            <article class="ce-entry ce-spell">
+              <header>
+                <h3>{{name}}</h3>
+                <p>{{levelName}} · {{schoolName}}{{#if prepared}} · {{localize "CHARACTER-EXPORTER.Sheet.Prepared"}}{{/if}}{{#if ritual}} · {{localize "CHARACTER-EXPORTER.Sheet.Ritual"}}{{/if}}{{#if concentration}} · {{localize "CHARACTER-EXPORTER.Sheet.Concentration"}}{{/if}}</p>
+              </header>
+              <dl class="ce-spell-facts">
+                {{#if activation.label}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Casting"}}</dt><dd>{{activation.label}}</dd></div>{{/if}}
+                {{#if range.label}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Range"}}</dt><dd>{{range.label}}</dd></div>{{/if}}
+                {{#if components.length}}<div><dt>{{localize "CHARACTER-EXPORTER.Sheet.Components"}}</dt><dd>{{characterExporterJoin components}}</dd></div>{{/if}}
+              </dl>
+              {{#if description}}<div class="ce-rich-text">{{{description}}}</div>{{/if}}
+            </article>
+          {{/each}}
+        </div>
+      {{/if}}
+    </section>
+  {{/if}}
+
+  <section class="ce-section ce-page-break ce-notes">
+    <h2>{{localize "CHARACTER-EXPORTER.Sheet.CharacterNotes"}}</h2>
+    <div class="ce-note-grid">
+      <article><h3>{{localize "CHARACTER-EXPORTER.Sheet.PersonalityTraits"}}</h3><p>{{notes.personalityTraits}}</p></article>
+      <article><h3>{{localize "CHARACTER-EXPORTER.Sheet.Ideals"}}</h3><p>{{notes.ideals}}</p></article>
+      <article><h3>{{localize "CHARACTER-EXPORTER.Sheet.Bonds"}}</h3><p>{{notes.bonds}}</p></article>
+      <article><h3>{{localize "CHARACTER-EXPORTER.Sheet.Flaws"}}</h3><p>{{notes.flaws}}</p></article>
+    </div>
+    {{#if notes.appearance}}<article class="ce-note-wide"><h3>{{localize "CHARACTER-EXPORTER.Sheet.Appearance"}}</h3><p>{{notes.appearance}}</p></article>{{/if}}
+    {{#if notes.biography}}<article class="ce-note-wide"><h3>{{localize "CHARACTER-EXPORTER.Sheet.Biography"}}</h3><div class="ce-rich-text">{{{notes.biography}}}</div></article>{{/if}}
+  </section>
+</article>
