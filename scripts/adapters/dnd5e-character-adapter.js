@@ -265,6 +265,8 @@ function normalizeMovement(attributes) {
 function normalizeSenses(attributes) {
   const config = dndConfig();
   const senses = attributes.senses ?? {};
+  // dnd5e 5.1 stores configured ranges directly on senses; 5.3 moved them
+  // into a mapping field while retaining migration shims for older data.
   const ranges = senses.ranges ?? senses;
   const result = Object.keys(config.senses ?? {}).flatMap(id => {
     const distance = optionalNumber(ranges[id]);
@@ -366,7 +368,9 @@ function normalizeSpells(actor) {
       duration: durationData(system.duration ?? activity?.duration, { ...item.labels, ...activity?.labels }),
       components: propertiesList(system.properties, config.spellProperties ?? config.itemProperties),
       materials: text(system.materials?.value),
-      sourceClass: text(system.classIdentifier),
+      // dnd5e 5.1 stores this semantic identifier as sourceClass. In 5.3 the
+      // prepared classIdentifier getter resolves the newer sourceItem field.
+      sourceClass: text(system.classIdentifier ?? system.sourceClass),
       description: descriptionOf(item)
     };
   }).sort((a, b) => a.level - b.level || a.name.localeCompare(b.name));

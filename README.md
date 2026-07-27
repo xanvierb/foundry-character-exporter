@@ -8,12 +8,12 @@ Version 1 intentionally does not create PDF files itself and has no PDF runtime 
 
 - Foundry Virtual Tabletop 14 (verified target)
 - Foundry Virtual Tabletop 13
-- D&D Fifth Edition system 5.3.x
+- D&D Fifth Edition system 5.1.9 through 5.3.x
 - Actor type `character` only
 
 NPC export and systems other than `dnd5e` are not enabled in version 1. The adapter and template registries are designed to support them later without changing the renderer.
 
-The implementation uses the v13/v14 `getActorContextOptions` hook, `foundry.applications.api.DialogV2`, `foundry.applications.handlebars.renderTemplate`, `game.actors`, `Actor#getRollData`, and `Document#testUserPermission` APIs. The current dnd5e 5.3 prepared data models and activity labels are used inside the dnd5e adapter.
+The implementation uses the v13/v14 `getActorContextOptions` hook, `foundry.applications.api.DialogV2`, `foundry.applications.handlebars.renderTemplate`, `game.actors`, `Actor#getRollData`, and `Document#testUserPermission` APIs. The adapter supports the dnd5e 5.1.9 prepared data model as well as the 5.3 senses and spell-source representations. Dnd5e 5.1.9 is intended for Foundry v13; use the current dnd5e 5.3 release on Foundry v14.
 
 ## Installation
 
@@ -193,7 +193,7 @@ npm run check
 
 The tests use Node's built-in test runner and cover normalization, signed modifiers, schema validation, adapter selection, template registration and compatibility, HTML renderer boundaries, and a representative multiclass dnd5e conversion. The project checker validates manifests, required files, template metadata, forbidden Actor/system access in sheet templates, and unsafe dynamic execution patterns.
 
-Because Foundry VTT itself is proprietary and is not bundled in this repository, automated tests do not boot a complete Foundry client. Final release verification should also be performed in both a Foundry v13 and v14 dnd5e 5.3 World using characters with multiclassing, containers, 2014 and 2024 rules, prepared spells, long feature descriptions, and a blocked-popup test.
+Because Foundry VTT itself is proprietary and is not bundled in this repository, automated tests do not boot a complete Foundry client. Final release verification should also be performed in a Foundry v13/dnd5e 5.1.9 World and a Foundry v14/dnd5e 5.3 World using characters with multiclassing, containers, 2014 and 2024 rules, prepared spells, long feature descriptions, and a blocked-popup test.
 
 ## Known version 1 limits
 

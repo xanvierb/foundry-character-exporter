@@ -33,6 +33,10 @@ if ("system" in manifest) throw new Error("module.json must not use the legacy t
 if (!manifest.relationships?.systems?.some((system) => system.id === "dnd5e")) {
   throw new Error("module.json must declare dnd5e in relationships.systems");
 }
+const dnd5eRelationship = manifest.relationships.systems.find((system) => system.id === "dnd5e");
+if (dnd5eRelationship.compatibility?.minimum !== "5.1.9") {
+  throw new Error("module.json must declare dnd5e 5.1.9 as the minimum supported system version");
+}
 if (!language["CHARACTER-EXPORTER"]) throw new Error("English localization namespace is missing");
 if (template.schemaVersion !== 1 || template.renderer !== "html") {
   throw new Error("Built-in template must target CharacterExportData schema 1 and the HTML renderer");

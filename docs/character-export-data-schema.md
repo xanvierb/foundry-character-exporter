@@ -236,7 +236,7 @@ The class array preserves different multiclass casting sources. Slots are effect
   duration: { value, units, concentration, label } | null,
   components: [{ id, name }],
   materials,
-  sourceClass,
+  sourceClass,           // normalized from dnd5e 5.1 sourceClass or newer source-item data
   description
 }
 ```

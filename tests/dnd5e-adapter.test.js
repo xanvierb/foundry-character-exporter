@@ -250,7 +250,7 @@ function makeActor() {
   };
 }
 
-test("dnd5e adapter creates normalized multiclass CharacterExportData", async t => {
+test("dnd5e 5.1.9 and 5.3 adapter creates normalized multiclass CharacterExportData", async t => {
   const previous = {
     game: globalThis.game,
     CONFIG: globalThis.CONFIG,
@@ -327,6 +327,27 @@ test("dnd5e adapter creates normalized multiclass CharacterExportData", async t 
   assert.doesNotThrow(() => JSON.stringify(data));
   assert.equal(JSON.stringify(data).includes('"system"'), true, "source.system is an intentional semantic field");
   assert.equal("actor" in data, false);
+
+  // dnd5e 5.1.9 stores senses directly and associates spells using sourceClass.
+  globalThis.game.system.version = "5.1.9";
+  const actor519 = makeActor();
+  actor519.system.attributes.senses = {
+    darkvision: 60,
+    units: "ft",
+    special: "Divine awareness"
+  };
+  actor519.system.details.race = actor519.items.get("race-human");
+  actor519.system.details.background = actor519.items.get("background-sage");
+  const spell519 = [...actor519.items].find(item => item.type === "spell");
+  delete spell519.system.classIdentifier;
+  spell519.system.sourceClass = "paladin";
+
+  const data519 = assertCharacterExportData(await adapter.convert(actor519));
+  assert.equal(data519.source.systemVersion, "5.1.9");
+  assert.equal(data519.character.species.name, "Human");
+  assert.equal(data519.character.background.name, "Sage");
+  assert.equal(data519.senses.find(sense => sense.id === "darkvision").distance, 60);
+  assert.equal(data519.spells[0].sourceClass, "paladin");
 });
 
 test("dnd5e adapter rejects NPCs and other systems", async t => {
