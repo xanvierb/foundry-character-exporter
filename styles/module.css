@@ -1,0 +1,56 @@
+.character-exporter-template-dialog .window-content {
+  padding: 0.9rem;
+}
+
+.character-exporter-template-dialog .character-exporter-template-picker {
+  min-width: min(34rem, 72vw);
+}
+
+.character-exporter-template-dialog .character-exporter-template-picker > p {
+  margin: 0 0 0.8rem;
+}
+
+.character-exporter-template-list {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.character-exporter-template-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.7rem;
+  align-items: start;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border-light-primary, #999);
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--color-cool-5, #292a2d) 8%, transparent);
+  cursor: pointer;
+}
+
+.character-exporter-template-option:has(input:checked) {
+  border-color: var(--color-border-highlight, #8c513e);
+  box-shadow: 0 0 0 1px var(--color-border-highlight, #8c513e);
+}
+
+.character-exporter-template-option input {
+  margin-top: 0.2rem;
+}
+
+.character-exporter-template-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.character-exporter-template-description,
+.character-exporter-template-meta {
+  grid-column: 2;
+  margin: 0;
+}
+
+.character-exporter-template-meta {
+  opacity: 0.72;
+  font-size: 0.85em;
+}
